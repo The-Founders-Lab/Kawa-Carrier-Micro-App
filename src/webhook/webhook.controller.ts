@@ -2,46 +2,36 @@ import {
   BadRequestException,
   Body,
   Controller,
-  Get,
   Param,
   Post,
-  Req,
 } from '@nestjs/common';
-import { Request } from 'express';
-import { isValidObjectId, Types } from 'mongoose';
 import { BookingService } from 'src/booking/booking.service';
-import { UpdateBookingDto } from 'src/booking/dto/update-booking.dto';
+import { CreateBookingDto } from 'src/booking/dto/create-booking.dto';
+import { BookingStatus } from 'src/booking/schemas/booking.schema';
 
-@Controller('webhook')
+@Controller('carrier-webhook')
 export class WebhookController {
   constructor(private bookingService: BookingService) {}
 
-  @Get('/track/:bookingId')
-  async getBooking(@Param('bookingId') bookingId: string, @Req() req: Request) {
-    const castedId = new Types.ObjectId(bookingId).toString();
-    if (!isValidObjectId(bookingId) || castedId !== bookingId) {
-      throw new BadRequestException('Invalid ID');
-    }
-
-    const booking = await this.bookingService.findOne(bookingId);
-    if (booking == null) {
-      throw new BadRequestException('Booking not found');
-    }
-
+  @Post('/send')
+  async getBooking(@Body() createBookingDto: CreateBookingDto) {
+    const { orderId, ...orderDetails } = createBookingDto;
+    const booking = await this.bookingService.create({
+      orderId,
+      orderDetails,
+    });
     return {
-      trackingURL: `${req.protocol}://${req.get('host')}${req.url}`,
       data: booking,
     };
   }
 
-  @Post('/track/:bookingId')
+  @Post('/update/:bookingId')
   async updateBooking(
     @Param('bookingId') bookingId: string,
-    @Body('status') newStatus: string,
+    @Body('status') newStatus: BookingStatus,
   ) {
-    const castedId = new Types.ObjectId(bookingId).toString();
-    if (!isValidObjectId(bookingId) || castedId !== bookingId) {
-      throw new BadRequestException('Invalid ID');
+    if (!Object.values(BookingStatus).includes(newStatus)) {
+      throw new BadRequestException('Invalid status update');
     }
 
     const booking = await this.bookingService.findOne(bookingId);
@@ -53,10 +43,17 @@ export class WebhookController {
       status: newStatus,
     });
 
-    // notify booking api here
+    await fetch('https://webhook.site/238dddcf-ab4d-4c05-a09c-1fe6b03e24c5', {
+      method: 'POST',
+      body: JSON.stringify({
+        status: update.status,
+        orderId: update.orderId,
+      }),
+    });
 
     return {
-      data: update,
+      status: update.status,
+      orderId: update.orderId,
     };
   }
 }

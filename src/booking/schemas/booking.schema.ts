@@ -1,13 +1,24 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
+export enum BookingStatus {
+  Pending = 'pending',
+  Assigned = 'assigned',
+  Processing = 'processing',
+  PickedUp = 'picked-up',
+  Delivered = 'delivered',
+}
+
 @Schema()
 export class Booking {
-  @Prop({ required: true })
-  name: string;
+  @Prop({ default: BookingStatus.Pending, enum: BookingStatus })
+  status: String;
 
-  @Prop({ default: 'pending' })
-  status: string;
+  @Prop()
+  orderId: String;
+
+  @Prop({ required: true, type: Object })
+  orderDetails: Object;
 }
 
 export type BookingDocument = HydratedDocument<Booking>;

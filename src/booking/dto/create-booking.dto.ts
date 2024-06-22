@@ -1,7 +1,10 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsObject, IsString } from 'class-validator';
 
 export class CreateBookingDto {
-  @IsString()
+  @IsObject()
   @IsNotEmpty()
-  name: string;
+  orderDetails: object;
+
+  @IsString()
+  orderId: string;
 }
