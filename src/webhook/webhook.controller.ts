@@ -1,4 +1,5 @@
 import {
+  Req,
   BadRequestException,
   Body,
   Controller,
@@ -8,21 +9,29 @@ import {
 import { BookingService } from 'src/booking/booking.service';
 import { CreateBookingDto } from 'src/booking/dto/create-booking.dto';
 import { BookingStatus } from 'src/booking/schemas/booking.schema';
+import { WebhookService } from './webhook.service';
 
 @Controller('carrier-webhook')
 export class WebhookController {
-  constructor(private bookingService: BookingService) {}
+  constructor(
+    private bookingService: BookingService,
+    private webhookService: WebhookService,
+  ) {}
 
   @Post('/send')
-  async getBooking(@Body() createBookingDto: CreateBookingDto) {
-    const { orderId, ...orderDetails } = createBookingDto;
-    const booking = await this.bookingService.create({
-      orderId,
-      orderDetails,
-    });
-    return {
-      data: booking,
-    };
+  async getBooking(@Body() body, @Req() req) {
+    this.webhookService.verifyDataIsFromKawa(
+      req.headers['x-kawa-signature'],
+      body,
+    );
+    return 'ok';
+    // // const booking = await this.bookingService.create({
+    // //   orderId,
+    // //   orderDetails,
+    // // });
+    // return {
+    //   data: booking,
+    // };
   }
 
   @Post('/update/:bookingId')
