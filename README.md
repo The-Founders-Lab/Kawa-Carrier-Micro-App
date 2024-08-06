@@ -10,7 +10,7 @@ $ npm install
 
 Make sure to update the new variables in the .env file
 ```bash
-$ cp .example.env .env
+$ cp .sample.env .env
 ```
 
 ## Confirm your mongodb instance is on
