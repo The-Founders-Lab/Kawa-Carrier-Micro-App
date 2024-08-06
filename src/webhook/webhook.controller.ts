@@ -7,9 +7,9 @@ import {
   Post,
 } from '@nestjs/common';
 import { BookingService } from 'src/booking/booking.service';
-import { CreateBookingDto } from 'src/booking/dto/create-booking.dto';
 import { BookingStatus } from 'src/booking/schemas/booking.schema';
 import { WebhookService } from './webhook.service';
+import config from 'src/config';
 
 @Controller('carrier-webhook')
 export class WebhookController {
@@ -24,14 +24,16 @@ export class WebhookController {
       req.headers['x-kawa-signature'],
       body,
     );
-    return 'ok';
-    // // const booking = await this.bookingService.create({
-    // //   orderId,
-    // //   orderDetails,
-    // // });
-    // return {
-    //   data: booking,
-    // };
+    const booking = await this.bookingService.create({ data: body });
+    console.log({
+      message: 'Data saved',
+      status: body.data.orderStatus,
+      data: booking.data,
+    });
+    return {
+      message: 'Data saved',
+      status: body.orderStatus,
+    };
   }
 
   @Post('/update/:bookingId')
@@ -39,6 +41,8 @@ export class WebhookController {
     @Param('bookingId') bookingId: string,
     @Body('status') newStatus: BookingStatus,
   ) {
+    // NOTE: this controller is just broilerplate for updating order status
+    // ========================================================
     if (!Object.values(BookingStatus).includes(newStatus)) {
       throw new BadRequestException('Invalid status update');
     }
@@ -52,17 +56,15 @@ export class WebhookController {
       status: newStatus,
     });
 
-    await fetch('https://webhook.site/238dddcf-ab4d-4c05-a09c-1fe6b03e24c5', {
+    await fetch(`${config.KAWA_SDK_BASE_URL}/orders/update-order-status`, {
       method: 'POST',
       body: JSON.stringify({
-        status: update.status,
-        orderId: update.orderId,
+        status: newStatus,
       }),
     });
 
     return {
-      status: update.status,
-      orderId: update.orderId,
+      status: newStatus,
     };
   }
 }

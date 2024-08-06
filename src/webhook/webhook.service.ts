@@ -12,9 +12,6 @@ export class WebhookService {
     if (kawaSignatureKey !== hash) {
       throw new ForbiddenException('Unknown data source');
     }
-    console.log('incoming', kawaSignatureKey);
-    console.log('new', hash);
-
     return kawaSignatureKey === hash;
   }
 }

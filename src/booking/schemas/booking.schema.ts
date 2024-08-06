@@ -11,14 +11,17 @@ export enum BookingStatus {
 
 @Schema()
 export class Booking {
-  @Prop({ default: BookingStatus.Pending, enum: BookingStatus })
-  status: String;
-
-  @Prop()
-  orderId: String;
+  // @Prop({ default: BookingStatus.Pending, enum: BookingStatus })
+  // status: String;
+  //
+  // @Prop()
+  // orderId: String;
+  //
+  // @Prop({ required: true, type: Object })
+  // orderDetails: Object;
 
   @Prop({ required: true, type: Object })
-  orderDetails: Object;
+  data: Object;
 }
 
 export type BookingDocument = HydratedDocument<Booking>;
