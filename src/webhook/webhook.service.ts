@@ -5,7 +5,10 @@ const { createHmac } = require('node:crypto');
 @Injectable()
 export class WebhookService {
   verifyDataIsFromKawa(kawaSignatureKey: string, body: object) {
-    const hash: string = createHmac('sha512', config.KAWA_SECRET_KEY as string)
+    const hash: string = createHmac(
+      'sha512',
+      config.KAWA_INTEGRATION_KEY as string,
+    )
       .update(JSON.stringify(body))
       .digest('hex');
 
