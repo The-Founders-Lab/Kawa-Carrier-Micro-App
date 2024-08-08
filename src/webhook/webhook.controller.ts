@@ -7,9 +7,10 @@ import {
   Post,
 } from '@nestjs/common';
 import { BookingService } from 'src/booking/booking.service';
-import { BookingStatus } from 'src/booking/schemas/booking.schema';
+import { OrderStatus } from 'src/booking/schemas/booking.schema';
 import { WebhookService } from './webhook.service';
 import config from 'src/config';
+import { UpdateBookingDto } from 'src/booking/dto/update-booking.dto';
 
 @Controller('carrier-webhook')
 export class WebhookController {
@@ -24,7 +25,11 @@ export class WebhookController {
       req.headers['x-kawa-signature'],
       body,
     );
-    const booking = await this.bookingService.create({ data: body });
+    console.log(body.id);
+    const booking = await this.bookingService.create({
+      data: body.data,
+      orderId: body.data.id,
+    });
     console.log({
       message: 'Data saved',
       status: body.data.orderStatus,
@@ -36,35 +41,52 @@ export class WebhookController {
     };
   }
 
-  @Post('/update/:bookingId')
+  @Post('/update/:orderId')
   async updateBooking(
-    @Param('bookingId') bookingId: string,
-    @Body('status') newStatus: BookingStatus,
+    @Param('orderId') orderId: string,
+    @Body() update: UpdateBookingDto,
   ) {
-    // NOTE: this controller is just broilerplate for updating order status
-    // ========================================================
-    if (!Object.values(BookingStatus).includes(newStatus)) {
+    if (!Object.values(OrderStatus).includes(update.orderStatus)) {
       throw new BadRequestException('Invalid status update');
     }
 
-    const booking = await this.bookingService.findOne(bookingId);
-    if (booking == null) {
+    const order = await this.bookingService.findByOrderId(orderId);
+    if (order == null) {
       throw new BadRequestException('Booking not found');
     }
 
-    const update = await this.bookingService.update(booking.id, {
-      status: newStatus,
-    });
+    const resp = await fetch(
+      `${config.KAWA_SDK_BASE_URL}/orders/update-order-status`,
+      {
+        body: JSON.stringify({
+          ...update,
+          orderId,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${config.KAWA_INTEGRATION_KEY}`,
+        },
+        method: 'POST',
+      },
+    );
+    const respJson = await resp.json();
 
-    await fetch(`${config.KAWA_SDK_BASE_URL}/orders/update-order-status`, {
-      method: 'POST',
-      body: JSON.stringify({
-        status: newStatus,
-      }),
-    });
+    if (respJson.statusCode === 200) {
+      await this.bookingService.updateByOrderId(order.id, {
+        data: {
+          ...order.data,
+          orderStatus: update.orderStatus,
+        },
+      });
+    }
 
-    return {
-      status: newStatus,
-    };
+    console.log('req', {
+      ...update,
+      orderId,
+    });
+    console.log('resp', respJson);
+    console.log();
+
+    return { message: respJson?.message || 'updated', data: respJson };
   }
 }
