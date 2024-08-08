@@ -23,8 +23,12 @@ export class BookingService {
     return this.bookingModel.findById(id);
   }
 
-  update(id: string, updateBookingDto: UpdateBookingDto) {
-    return this.bookingModel.findByIdAndUpdate(id, updateBookingDto, {
+  findByOrderId(orderId: string) {
+    return this.bookingModel.findOne({ orderId: orderId });
+  }
+
+  updateByOrderId(orderId: string, update: Partial<UpdateBookingDto>) {
+    return this.bookingModel.findByIdAndUpdate(orderId, update, {
       new: true,
     });
   }
