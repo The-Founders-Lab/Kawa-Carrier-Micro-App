@@ -5,8 +5,8 @@ export class CreateBookingDto {
   // @IsNotEmpty()
   // orderDetails: object;
   //
-  // @IsString()
-  // orderId: string;
+  @IsString()
+  orderId: string;
 
   @IsObject()
   @IsNotEmpty()
