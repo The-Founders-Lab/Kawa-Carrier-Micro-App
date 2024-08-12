@@ -6,16 +6,14 @@ import { OrdersModule } from './orders/orders.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { WebhookModule } from './webhook/webhook.module';
 import config from './config';
+import { RidersModule } from './riders/riders.module';
 
 @Module({
   imports: [
     MongooseModule.forRoot(config.MONGO_URI),
     OrdersModule,
     WebhookModule,
-  
-    MongooseModule.forRoot(config.MONGO_URI),
-    OrdersModule,
-    WebhookModule,
+    RidersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
