@@ -16,6 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 
 export default function Orders({ orderList, riderList, assignRider }) {
   return (
@@ -32,52 +33,64 @@ export default function Orders({ orderList, riderList, assignRider }) {
               <TableHead className="text-yellow-700">Description</TableHead>
               <TableHead className="text-yellow-700">Status</TableHead>
               <TableHead className="text-yellow-700">Assign Rider</TableHead>
+              <TableHead className="text-yellow-700">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {orderList.map((order) => (
-              <TableRow key={order.id} className="border-b border-yellow-100">
-                <TableCell>{order.id}</TableCell>
-                <TableCell>{order.user}</TableCell>
-                <TableCell>{order.description}</TableCell>
+              <TableRow key={order._id} className="border-b border-yellow-100">
+                <TableCell>{order.orderId}</TableCell>
+                <TableCell>
+                  {order.data.user.firstName} {order.data.user.lastName}
+                </TableCell>
+                <TableCell>{order.data.itemDescription}</TableCell>
                 <TableCell>
                   <Badge
                     variant={
-                      order.status === "Pending" ? "secondary" : "success"
+                      order.data.orderStatus === "delivered"
+                        ? "success"
+                        : "secondary"
                     }
                     className={
-                      order.status === "Pending"
-                        ? "bg-yellow-200 text-yellow-800"
-                        : "bg-green-200 text-green-800"
+                      order.data.orderStatus === "delivered"
+                        ? "bg-green-200 text-green-800"
+                        : "bg-yellow-200 text-yellow-800"
                     }
                   >
-                    {order.status}
+                    {order.data.orderStatus}
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  {order.status === "Pending" && (
-                    <Select
-                      onValueChange={(value) =>
-                        assignRider(order.id, parseInt(value))
-                      }
-                    >
-                      <SelectTrigger className="w-[180px] border-yellow-300 focus:ring-yellow-500">
-                        <SelectValue placeholder="Assign to rider" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {riderList
-                          .filter((rider) => rider.available)
-                          .map((rider) => (
-                            <SelectItem
-                              key={rider.id}
-                              value={rider.id.toString()}
-                            >
-                              {rider.name}
-                            </SelectItem>
-                          ))}
-                      </SelectContent>
-                    </Select>
-                  )}
+                  {(order.data.orderStatus === "pending" &&
+                    !order.data.rider && (
+                      <Select
+                        onValueChange={(value) =>
+                          assignRider(order.orderId, value)
+                        }
+                      >
+                        <SelectTrigger className="w-[180px] border-yellow-300 focus:ring-yellow-500">
+                          <SelectValue placeholder="Assign to rider" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <option value="">Assign a rider</option>
+                          {riderList
+                            .filter((rider) => rider.available)
+                            .map((rider) => (
+                              <SelectItem key={rider._id} value={rider._id}>
+                                {rider.riderFirstName} {rider.riderLastName}
+                              </SelectItem>
+                            ))}
+                        </SelectContent>
+                      </Select>
+                    )) ||
+                    "-"}
+                </TableCell>
+                <TableCell>
+                  {order.data?.rider &&
+                    order.data.orderStatus !== "delivered" && (
+                      // TODO: next
+                      <Button onClick={() => assignRider()}>Action</Button>
+                    )}
                 </TableCell>
               </TableRow>
             ))}
@@ -86,4 +99,23 @@ export default function Orders({ orderList, riderList, assignRider }) {
       </CardContent>
     </Card>
   );
+}
+
+{
+  /*!order.data.rider && (
+                    <select
+                      onChange={(event) => {
+                        console.log("change");
+                        assignRider(order.orderId, event.target.value);
+                      }}
+                    >
+                      {riderList
+                        .filter((rider) => rider.available)
+                        .map((rider) => (
+                          <option key={rider._id} value={rider._id.toString()}>
+                            {rider.riderFirstName} {rider.riderLastName}
+                          </option>
+                        ))}
+                    </select>
+                  )*/
 }

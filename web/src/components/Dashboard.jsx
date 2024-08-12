@@ -1,55 +1,73 @@
-import { useState } from "react";
 import Orders from "@/components/Orders";
 import Riders from "@/components/Riders";
+import useGetAsyncHook from "@/getAsyncHook";
+import { useToast } from "./ui/use-toast";
+import { useState } from "react";
 
-const orders = [
-  {
-    id: 1,
-    user: "John Doe",
-    description: "2x Pizza",
-    status: "Pending",
-    riderId: null,
-  },
-  {
-    id: 2,
-    user: "Jane Doe",
-    description: "1x Burger, 1x Fries",
-    status: "Assigned",
-    riderId: 2,
-  },
-  {
-    id: 3,
-    user: "Mr Bob",
-    description: "3x Tacos",
-    status: "Pending",
-    riderId: null,
-  },
-];
-const riders = [
-  { id: 1, name: "Mike Ross", available: true, orderId: null },
-  { id: 2, name: "Rachel Zane", available: false, orderId: 2 },
-  { id: 3, name: "Harvey Specter", available: true, orderId: null },
-];
+const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
 export default function Dashboard() {
-  const [orderList, setOrderList] = useState(orders);
-  const [riderList, setRiderList] = useState(riders);
+  const [pageLoading, setPageLoading] = useState(false);
+  const { data: orderList, setReload: setOrderReload } = useGetAsyncHook(
+    `${SERVER_URL}/orders`,
+  );
+  const { data: riderList } = useGetAsyncHook(`${SERVER_URL}/riders`);
+  const { toast } = useToast();
 
   const assignRider = (orderId, riderId) => {
-    setOrderList(
-      orderList.map((order) =>
-        order.id === orderId
-          ? { ...order, status: "Assigned", riderId }
-          : order,
-      ),
-    );
-    setRiderList(
-      riderList.map((rider) =>
-        rider.id === riderId ? { ...rider, available: false, orderId } : rider,
-      ),
-    );
+    setPageLoading(true);
+    fetch(`${SERVER_URL}/orders/assign-rider`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        orderId,
+        riderId,
+      }),
+    })
+      .then((resp) => resp.json())
+      .then((data) => {
+        console.log("hmm", data);
+        setPageLoading(true);
+        if (data.response.statusCode !== 200) {
+          setPageLoading(false);
+          return toast({
+            title: "Error",
+            variant: "destructive",
+            description:
+              data?.message ||
+              data?.response?.message ||
+              "Something went wrong",
+          });
+        }
+
+        console.log("update successful", data);
+        toast({
+          title: "Success",
+          description: data?.message || data?.response?.message,
+        });
+        setOrderReload((reload) => reload + 1);
+        setPageLoading(false);
+      })
+      .catch((error) => {
+        console.log("error", error);
+        toast({
+          title: "Error",
+          description:
+            error?.message ||
+            error?.response?.message ||
+            "Something went wrong",
+        });
+        setPageLoading(false);
+      });
   };
 
+  if (!riderList || !orderList || pageLoading) {
+    return <p>Loading</p>;
+  }
+  console.log(orderList);
+  console.log(riderList);
   return (
     <div className="min-h-screen bg-yellow-50">
       <header className="bg-yellow-400 text-yellow-900 py-6 shadow-md">

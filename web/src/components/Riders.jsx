@@ -29,8 +29,10 @@ export default function Riders({ riderList }) {
           </TableHeader>
           <TableBody>
             {riderList.map((rider) => (
-              <TableRow key={rider.id} className="border-b border-yellow-100">
-                <TableCell>{rider.name}</TableCell>
+              <TableRow key={rider._id} className="border-b border-yellow-100">
+                <TableCell>
+                  {rider.riderLastName} {rider.riderFirstName}
+                </TableCell>
                 <TableCell>
                   <Badge
                     variant={rider.available ? "success" : "secondary"}
@@ -43,7 +45,9 @@ export default function Riders({ riderList }) {
                     {rider.available ? "Available" : "Unavailable"}
                   </Badge>
                 </TableCell>
-                <TableCell>{rider.orderId || "N/A"}</TableCell>
+                <TableCell>
+                  {(!rider.available && rider?.orderId) || "N/A"}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
