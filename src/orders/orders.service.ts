@@ -17,21 +17,17 @@ export class OrdersService {
     return this.orderModel.find();
   }
 
-  findOne(id: string) {
-    return this.orderModel.findById(id);
+  findOne(orderId: string) {
+    return this.orderModel.findOne({ orderId });
   }
 
-  findByOrderId(orderId: string) {
-    return this.orderModel.findOne({ orderId: orderId });
-  }
-
-  updateByOrderId(orderId: string, update: Partial<UpdateOrderDto>) {
+  update(orderId: string, update: Partial<UpdateOrderDto>) {
     return this.orderModel.findByIdAndUpdate(orderId, update, {
       new: true,
     });
   }
 
-  remove(id: string) {
-    return this.orderModel.findByIdAndDelete(id);
+  remove(orderId: string) {
+    return this.orderModel.findByIdAndDelete(orderId);
   }
 }
