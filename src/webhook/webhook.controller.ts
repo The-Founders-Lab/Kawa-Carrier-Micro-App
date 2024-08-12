@@ -6,34 +6,35 @@ import {
   Param,
   Post,
 } from '@nestjs/common';
-import { BookingService } from 'src/booking/booking.service';
-import { OrderStatus } from 'src/booking/schemas/booking.schema';
+import { OrdersService } from 'src/orders/orders.service';
+import { OrderStatus } from 'src/orders/schemas/orders.schema';
 import { WebhookService } from './webhook.service';
 import config from 'src/config';
-import { UpdateBookingDto } from 'src/booking/dto/update-booking.dto';
+import { UpdateOrderDto } from 'src/orders/dto/update-order.dto';
 
 @Controller('carrier-webhook')
 export class WebhookController {
   constructor(
-    private bookingService: BookingService,
+    private ordersService: OrdersService,
     private webhookService: WebhookService,
   ) {}
 
   @Post('/send')
-  async getBooking(@Body() body, @Req() req) {
+  async receiveOrder(@Body() body, @Req() req) {
+    console.log('RECEIVED', body);
     this.webhookService.verifyDataIsFromKawa(
       req.headers['x-kawa-signature'],
       body,
     );
     console.log(body.id);
-    const booking = await this.bookingService.create({
+    const order = await this.ordersService.create({
       data: body.data,
       orderId: body.data.id,
     });
     console.log({
       message: 'Data saved',
       status: body.data.orderStatus,
-      data: booking.data,
+      data: order.data,
     });
     return {
       message: 'Data saved',
@@ -42,17 +43,17 @@ export class WebhookController {
   }
 
   @Post('/update/:orderId')
-  async updateBooking(
+  async updateOrder(
     @Param('orderId') orderId: string,
-    @Body() update: UpdateBookingDto,
+    @Body() update: UpdateOrderDto,
   ) {
     if (!Object.values(OrderStatus).includes(update.orderStatus)) {
       throw new BadRequestException('Invalid status update');
     }
 
-    const order = await this.bookingService.findByOrderId(orderId);
+    const order = await this.ordersService.findByOrderId(orderId);
     if (order == null) {
-      throw new BadRequestException('Booking not found');
+      throw new BadRequestException('Order not found');
     }
 
     const resp = await fetch(
@@ -72,7 +73,7 @@ export class WebhookController {
     const respJson = await resp.json();
 
     if (respJson.statusCode === 200) {
-      await this.bookingService.updateByOrderId(order.id, {
+      await this.ordersService.updateByOrderId(order.id, {
         data: {
           ...order.data,
           orderStatus: update.orderStatus,

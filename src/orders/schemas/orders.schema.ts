@@ -9,19 +9,13 @@ export enum OrderStatus {
 }
 
 @Schema()
-export class Booking {
-  // @Prop({ default: BookingStatus.Pending, enum: BookingStatus })
-  // status: String;
-  //
+export class Order {
   @Prop()
   orderId: String;
-  //
-  // @Prop({ required: true, type: Object })
-  // orderDetails: Object;
 
   @Prop({ required: true, type: Object })
   data: Object;
 }
 
-export type BookingDocument = HydratedDocument<Booking>;
-export const BookingSchema = SchemaFactory.createForClass(Booking);
+export type OrderDocument = HydratedDocument<Order>;
+export const OrderSchema = SchemaFactory.createForClass(Order);

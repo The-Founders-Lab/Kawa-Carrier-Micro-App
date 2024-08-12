@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsObject, IsString } from 'class-validator';
 
-export class CreateBookingDto {
+export class CreateOrderDto {
   // @IsObject()
   // @IsNotEmpty()
   // orderDetails: object;

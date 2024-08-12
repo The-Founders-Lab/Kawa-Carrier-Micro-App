@@ -1,5 +1,5 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { CreateBookingDto } from './create-booking.dto';
+import { CreateOrderDto } from './create-order.dto';
 import {
   IsBoolean,
   IsNotEmpty,
@@ -7,9 +7,9 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { OrderStatus } from '../schemas/booking.schema';
+import { OrderStatus } from '../schemas/orders.schema';
 
-export class UpdateBookingDto extends PartialType(CreateBookingDto) {
+export class UpdateOrderDto extends PartialType(CreateOrderDto) {
   @IsString()
   @IsNotEmpty()
   orderStatus: OrderStatus;
