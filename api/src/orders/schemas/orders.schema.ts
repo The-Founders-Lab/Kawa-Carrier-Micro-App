@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
 export enum OrderStatusEnum {
+  pending = 'pending',
   start = 'start',
   pickup = 'pickup',
   delivered = 'delivered',

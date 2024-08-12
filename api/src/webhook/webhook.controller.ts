@@ -1,6 +1,7 @@
 import { Req, Body, Controller, Post } from '@nestjs/common';
 import { OrdersService } from 'src/orders/orders.service';
 import { WebhookService } from './webhook.service';
+import { OrderStatusEnum } from 'src/orders/schemas/orders.schema';
 
 @Controller('carrier-webhook')
 export class WebhookController {
@@ -18,7 +19,7 @@ export class WebhookController {
     );
     console.log(body.id);
     const order = await this.ordersService.create({
-      data: body.data,
+      data: { ...body.data, orderStatus: OrderStatusEnum.pending },
       orderId: body.data.id,
     });
     console.log({
