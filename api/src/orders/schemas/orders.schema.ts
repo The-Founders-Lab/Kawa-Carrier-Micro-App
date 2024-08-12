@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
-export enum OrderStatus {
+export enum OrderStatusEnum {
   start = 'start',
   pickup = 'pickup',
   delivered = 'delivered',
@@ -14,7 +14,7 @@ export class Order {
   orderId: String;
 
   @Prop({ required: true, type: Object })
-  data: Object;
+  data: Record<string, any>;
 }
 
 export type OrderDocument = HydratedDocument<Order>;
