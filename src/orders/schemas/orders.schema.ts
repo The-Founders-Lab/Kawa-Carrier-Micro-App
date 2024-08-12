@@ -10,7 +10,7 @@ export enum OrderStatus {
 
 @Schema()
 export class Order {
-  @Prop()
+  @Prop({ primary: true, unique: true })
   orderId: String;
 
   @Prop({ required: true, type: Object })
