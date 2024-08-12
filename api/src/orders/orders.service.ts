@@ -5,7 +5,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Order, OrderStatusEnum } from './schemas/orders.schema';
 import { Model } from 'mongoose';
 import { RidersService } from 'src/riders/riders.service';
-import { RiderStatusEnum } from 'src/riders/schemas/riders.schema';
 import config from 'src/config';
 
 @Injectable()
@@ -32,7 +31,7 @@ export class OrdersService {
         throw new BadRequestException('Order does not exist');
       }
 
-      if (rider.riderStatus !== RiderStatusEnum.Available) {
+      if (rider.available !== true) {
         throw new BadRequestException('Rider is not available');
       }
 
@@ -42,7 +41,7 @@ export class OrdersService {
         );
       }
 
-      const { riderStatus, ...riderPayload } = rider.toJSON();
+      const { available, ...riderPayload } = rider.toJSON();
       const resp = await fetch(
         `${config.KAWA_SDK_BASE_URL}/orders/assign-order`,
         {
@@ -63,7 +62,7 @@ export class OrdersService {
         await order.updateOne({
           data: { ...order.data, rider: riderPayload },
         });
-        await rider.updateOne({ riderStatus: RiderStatusEnum.UnAvailable });
+        await rider.updateOne({ available: false });
       }
 
       return {
@@ -130,10 +129,7 @@ export class OrdersService {
         respJson.statusCode === 200 &&
         update.orderStatus === OrderStatusEnum.delivered
       ) {
-        await this.ridersService.updateRiderStatus(
-          order.data?.rider,
-          RiderStatusEnum.Available,
-        );
+        await this.ridersService.updateRiderStatus(order.data?.rider, true);
       }
 
       return { message: respJson?.message || 'updated', data: respJson };

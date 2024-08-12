@@ -1,11 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
-export enum RiderStatusEnum {
-  Available = 'available',
-  UnAvailable = 'unavailable',
-}
-
 @Schema()
 export class Riders {
   @Prop()
@@ -36,11 +31,10 @@ export class Riders {
   vehicleType: string;
 
   @Prop({
-    type: String,
-    enum: RiderStatusEnum,
-    default: RiderStatusEnum.Available,
+    type: Boolean,
+    default: true,
   })
-  riderStatus: string;
+  available: boolean;
 }
 
 export type RidersDocument = HydratedDocument<Riders>;

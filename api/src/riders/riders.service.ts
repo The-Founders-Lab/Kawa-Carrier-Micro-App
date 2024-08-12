@@ -1,10 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import {
-  RiderStatusEnum,
-  Riders,
-  RidersDocument,
-} from './schemas/riders.schema';
+import { Riders, RidersDocument } from './schemas/riders.schema';
 import { Model } from 'mongoose';
 
 @Injectable()
@@ -21,10 +17,10 @@ export class RidersService {
     return this.ridersModel.findById(riderId);
   }
 
-  updateRiderStatus(riderId: string, status: RiderStatusEnum) {
+  updateRiderStatus(riderId: string, status: boolean) {
     return this.ridersModel.findByIdAndUpdate(
       riderId,
-      { riderStatus: status },
+      { available: status },
       { new: true },
     );
   }
