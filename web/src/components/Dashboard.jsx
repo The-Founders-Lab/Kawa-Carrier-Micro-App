@@ -11,8 +11,15 @@ export default function Dashboard() {
   const { data: orderList, setReload: setOrderReload } = useGetAsyncHook(
     `${SERVER_URL}/orders`,
   );
-  const { data: riderList } = useGetAsyncHook(`${SERVER_URL}/riders`);
+  const { data: riderList, setReload: setRiderReload } = useGetAsyncHook(
+    `${SERVER_URL}/riders`,
+  );
   const { toast } = useToast();
+
+  const reload = () => {
+    setOrderReload((reload) => reload + 1);
+    setRiderReload((reload) => reload + 1);
+  };
 
   const assignRider = (orderId, riderId) => {
     setPageLoading(true);
@@ -47,8 +54,8 @@ export default function Dashboard() {
           title: "Success",
           description: data?.message || data?.response?.message,
         });
-        setOrderReload((reload) => reload + 1);
         setPageLoading(false);
+        reload();
       })
       .catch((error) => {
         console.log("error", error);
