@@ -73,7 +73,7 @@ export default function Orders({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {orderList.map((order) => (
+            {[...orderList].reverse().map((order) => (
               <TableRow key={order._id} className="border-b border-slate-100">
                 <TableCell>{order.orderId}</TableCell>
                 <TableCell>
