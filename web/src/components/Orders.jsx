@@ -20,14 +20,14 @@ import { Button } from "@/components/ui/button";
 
 export default function Orders({ orderList, riderList, assignRider }) {
   return (
-    <Card className="border-yellow-200 shadow-lg">
-      <CardHeader className="bg-yellow-100">
-        <CardTitle className="text-yellow-800">Orders</CardTitle>
+    <Card className="shadow-lg">
+      <CardHeader className="bg-black">
+        <CardTitle className="text-slate-100">Orders</CardTitle>
       </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
-            <TableRow className="bg-yellow-50">
+            <TableRow className="bg-slate-50">
               <TableHead className="text-yellow-700">Order ID</TableHead>
               <TableHead className="text-yellow-700">User</TableHead>
               <TableHead className="text-yellow-700">Description</TableHead>
@@ -38,7 +38,7 @@ export default function Orders({ orderList, riderList, assignRider }) {
           </TableHeader>
           <TableBody>
             {orderList.map((order) => (
-              <TableRow key={order._id} className="border-b border-yellow-100">
+              <TableRow key={order._id} className="border-b border-slate-100">
                 <TableCell>{order.orderId}</TableCell>
                 <TableCell>
                   {order.data.user.firstName} {order.data.user.lastName}
@@ -61,14 +61,14 @@ export default function Orders({ orderList, riderList, assignRider }) {
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  {(order.data.orderStatus === "pending" &&
+                  {(order.data.orderStatus === "processing" &&
                     !order.data.rider && (
                       <Select
                         onValueChange={(value) =>
                           assignRider(order.orderId, value)
                         }
                       >
-                        <SelectTrigger className="w-[180px] border-yellow-300 focus:ring-yellow-500">
+                        <SelectTrigger className="w-[180px] border-slate-800 focus:ring-slate-500">
                           <SelectValue placeholder="Assign to rider" />
                         </SelectTrigger>
                         <SelectContent>

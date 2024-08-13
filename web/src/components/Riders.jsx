@@ -12,14 +12,14 @@ import { Badge } from "@/components/ui/badge";
 
 export default function Riders({ riderList }) {
   return (
-    <Card className="border-yellow-200 shadow-lg">
-      <CardHeader className="bg-yellow-100">
-        <CardTitle className="text-yellow-800">Riders</CardTitle>
+    <Card className="shadow-lg">
+      <CardHeader className="bg-black">
+        <CardTitle className="text-slate-100">Riders</CardTitle>
       </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
-            <TableRow className="bg-yellow-50">
+            <TableRow className="bg-slate-50">
               <TableHead className="text-yellow-700">Name</TableHead>
               <TableHead className="text-yellow-700">Availability</TableHead>
               <TableHead className="text-yellow-700">
@@ -29,7 +29,7 @@ export default function Riders({ riderList }) {
           </TableHeader>
           <TableBody>
             {riderList.map((rider) => (
-              <TableRow key={rider._id} className="border-b border-yellow-100">
+              <TableRow key={rider._id} className="border-b border-slate-100">
                 <TableCell>
                   {rider.riderLastName} {rider.riderFirstName}
                 </TableCell>

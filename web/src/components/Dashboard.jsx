@@ -5,6 +5,21 @@ import { useToast } from "./ui/use-toast";
 import { useState } from "react";
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+const sampleOrderUpdate = {
+  orderStartCoord: {
+    lat: 6.8214479,
+    lng: 3.4497741,
+  },
+  riderPickUpCoord: {
+    lat: 6.8214479,
+    lng: 3.4497741,
+  },
+  riderDropOffCoord: {
+    lat: 6.8214479,
+    lng: 3.4497741,
+  },
+  deliveryImageLink: "",
+};
 
 export default function Dashboard() {
   const [pageLoading, setPageLoading] = useState(false);
@@ -70,14 +85,48 @@ export default function Dashboard() {
       });
   };
 
+  const updateOrderStatus = (orderId, status = "") => {
+    fetch(`${SERVER_URL}/orders/update-status`, {
+      method: "PATCH",
+      body: JSON.stringify({
+        orderId,
+        orderStatus: status,
+        ...sampleOrderUpdate,
+      }),
+    })
+      .then((resp) => resp.json())
+      .then((data) => {
+        if (data.statusCode !== 200) {
+          return toast({
+            title: "Error",
+            variant: "destructive",
+            description: data?.message || "Something went wrong",
+          });
+        }
+
+        toast({
+          title: "Success",
+          description: "Order assigned successfully",
+        });
+        setOrderReload((reload) => reload + 1);
+      })
+      .catch((error) => {
+        console.log("error", error);
+        toast({
+          title: "Error",
+          description: error?.message || "Something went wrong",
+        });
+      });
+  };
+
   if (!riderList || !orderList || pageLoading) {
     return <p>Loading</p>;
   }
   console.log(orderList);
   console.log(riderList);
   return (
-    <div className="min-h-screen bg-yellow-50">
-      <header className="bg-yellow-400 text-yellow-900 py-6 shadow-md">
+    <div className="min-h-screen bg-gray-200">
+      <header className="bg-black text-slate-100 py-6 shadow-md">
         <div className="container mx-auto px-4">
           <h1 className="text-3xl font-bold">0x Carrier Dashboard</h1>
         </div>
