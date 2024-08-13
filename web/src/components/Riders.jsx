@@ -10,7 +10,13 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 
-export default function Riders({ riderList }) {
+export default function Riders({ riderList, orderList }) {
+  riderList = riderList.map((rider) => {
+    const order = orderList.find(
+      (order) => order.data.rider?._id === rider._id,
+    );
+    return order ? { ...rider, orderId: order._id } : rider;
+  });
   return (
     <Card className="shadow-lg">
       <CardHeader className="bg-black">

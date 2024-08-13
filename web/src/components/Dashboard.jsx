@@ -138,7 +138,7 @@ export default function Dashboard() {
           riderList={riderList}
         />
 
-        <Riders riderList={riderList} />
+        <Riders orderList={orderList} riderList={riderList} />
       </main>
     </div>
   );
