@@ -39,7 +39,7 @@ export default function Orders({
   updateOrderStatus,
 }) {
   return (
-    <Card className="shadow-lg">
+    <Card className="shadow-lg h-[400px] overflow-y-scroll">
       <CardHeader className="bg-black">
         <CardTitle className="text-slate-100">Orders</CardTitle>
       </CardHeader>
