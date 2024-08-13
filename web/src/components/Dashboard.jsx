@@ -2,25 +2,9 @@ import Orders from "@/components/Orders";
 import Riders from "@/components/Riders";
 import useGetAsyncHook from "@/getAsyncHook";
 import { useToast } from "./ui/use-toast";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
-const sampleOrderUpdate = {
-  deliveryCode: 1000,
-  orderStartCoord: {
-    lat: 6.8214479,
-    lng: 3.4497741,
-  },
-  riderPickUpCoord: {
-    lat: 6.8214479,
-    lng: 3.4497741,
-  },
-  riderDropOffCoord: {
-    lat: 6.8214479,
-    lng: 3.4497741,
-  },
-  deliveryImageLink: "",
-};
 
 export default function Dashboard() {
   const [pageLoading, setPageLoading] = useState(false);
@@ -32,12 +16,12 @@ export default function Dashboard() {
   );
   const { toast } = useToast();
 
-  const reload = () => {
+  function reload() {
     setOrderReload((reload) => reload + 1);
     setRiderReload((reload) => reload + 1);
-  };
+  }
 
-  const assignRider = (orderId, riderId) => {
+  function assignRider(orderId, riderId) {
     setPageLoading(true);
     fetch(`${SERVER_URL}/orders/assign-rider`, {
       method: "PATCH",
@@ -83,9 +67,9 @@ export default function Dashboard() {
         });
         setPageLoading(false);
       });
-  };
+  }
 
-  const updateOrderStatus = (orderId, status = "") => {
+  function updateOrderStatus(orderId, status = "", otherUpdateData) {
     fetch(`${SERVER_URL}/orders/update-status`, {
       method: "PATCH",
       headers: {
@@ -94,7 +78,7 @@ export default function Dashboard() {
       body: JSON.stringify({
         orderId,
         orderStatus: status,
-        ...sampleOrderUpdate,
+        ...otherUpdateData,
       }),
     })
       .then((resp) => resp.json())
@@ -121,7 +105,7 @@ export default function Dashboard() {
           description: error?.message || "Something went wrong",
         });
       });
-  };
+  }
 
   if (!riderList || !orderList || pageLoading) {
     return <p>Loading</p>;

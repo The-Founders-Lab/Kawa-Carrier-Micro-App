@@ -32,6 +32,23 @@ const orderStatesSequence = {
   delayed: [orderStates.delivered],
 };
 
+const sampleOrderUpdate = {
+  deliveryCode: 1000,
+  orderStartCoord: {
+    lat: 6.8214479,
+    lng: 3.4497741,
+  },
+  riderPickUpCoord: {
+    lat: 6.8214479,
+    lng: 3.4497741,
+  },
+  riderDropOffCoord: {
+    lat: 6.8214479,
+    lng: 3.4497741,
+  },
+  deliveryImageLink: "",
+};
+
 export default function Orders({
   orderList,
   riderList,
@@ -109,7 +126,11 @@ export default function Orders({
                     order.data.orderStatus !== orderStates.delivered && (
                       <Select
                         onValueChange={(value) =>
-                          updateOrderStatus(order.orderId, value)
+                          updateOrderStatus(
+                            order.orderId,
+                            value,
+                            sampleOrderUpdate,
+                          )
                         }
                       >
                         <SelectTrigger className="w-[180px] border-slate-800 focus:ring-slate-500">
