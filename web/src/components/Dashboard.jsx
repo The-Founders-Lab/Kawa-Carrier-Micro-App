@@ -4,6 +4,7 @@ import useGetAsyncHook from "@/getAsyncHook";
 import { useToast } from "./ui/use-toast";
 import { useEffect } from "react";
 import Loader from "./Loader";
+import { RefreshCw } from "lucide-react";
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
@@ -21,8 +22,12 @@ export default function Dashboard() {
     // This is for testing purposes only
     const orderRefreshId = setInterval(() => {
       toast({
-        title: "Syncing Orders",
-        description: "Pulling fresh data",
+        title: (
+          <p className="flex gap-x-1 items-center">
+            <RefreshCw fontSize={5} className="text-yellow-500" /> Syncing
+            Orders
+          </p>
+        ),
       });
       setOrderReload((reload) => reload + 1);
     }, 5000);
