@@ -6,6 +6,7 @@ import { useState } from "react";
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 const sampleOrderUpdate = {
+  deliveryCode: 1000,
   orderStartCoord: {
     lat: 6.8214479,
     lng: 3.4497741,
@@ -50,7 +51,6 @@ export default function Dashboard() {
     })
       .then((resp) => resp.json())
       .then((data) => {
-        console.log("hmm", data);
         setPageLoading(true);
         if (data.response.statusCode !== 200) {
           setPageLoading(false);
@@ -64,9 +64,9 @@ export default function Dashboard() {
           });
         }
 
-        console.log("update successful", data);
         toast({
-          title: "Success",
+          title: "Order assigned successfully",
+          variant: "success",
           description: data?.message || data?.response?.message,
         });
         setPageLoading(false);
@@ -88,6 +88,9 @@ export default function Dashboard() {
   const updateOrderStatus = (orderId, status = "") => {
     fetch(`${SERVER_URL}/orders/update-status`, {
       method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
         orderId,
         orderStatus: status,
@@ -96,7 +99,7 @@ export default function Dashboard() {
     })
       .then((resp) => resp.json())
       .then((data) => {
-        if (data.statusCode !== 200) {
+        if (data.data.statusCode !== 200) {
           return toast({
             title: "Error",
             variant: "destructive",
@@ -106,9 +109,10 @@ export default function Dashboard() {
 
         toast({
           title: "Success",
-          description: "Order assigned successfully",
+          variant: "success",
+          description: `Order "${status}" successfully`,
         });
-        setOrderReload((reload) => reload + 1);
+        reload();
       })
       .catch((error) => {
         console.log("error", error);
@@ -122,8 +126,6 @@ export default function Dashboard() {
   if (!riderList || !orderList || pageLoading) {
     return <p>Loading</p>;
   }
-  console.log(orderList);
-  console.log(riderList);
   return (
     <div className="min-h-screen bg-gray-200">
       <header className="bg-black text-slate-100 py-6 shadow-md">
@@ -136,6 +138,7 @@ export default function Dashboard() {
           orderList={orderList}
           assignRider={assignRider}
           riderList={riderList}
+          updateOrderStatus={updateOrderStatus}
         />
 
         <Riders orderList={orderList} riderList={riderList} />

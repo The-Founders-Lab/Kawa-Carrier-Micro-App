@@ -16,7 +16,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 
 const orderStates = {
   processing: "processing",
@@ -26,7 +25,19 @@ const orderStates = {
   delayed: "delayed",
 };
 
-export default function Orders({ orderList, riderList, assignRider }) {
+const orderStatesSequence = {
+  processing: [orderStates.start],
+  start: [orderStates.pickup],
+  pickup: [orderStates.delivered, orderStates.delayed],
+  delayed: [orderStates.delivered],
+};
+
+export default function Orders({
+  orderList,
+  riderList,
+  assignRider,
+  updateOrderStatus,
+}) {
   return (
     <Card className="shadow-lg">
       <CardHeader className="bg-black">
@@ -96,8 +107,25 @@ export default function Orders({ orderList, riderList, assignRider }) {
                 <TableCell>
                   {order.data?.rider &&
                     order.data.orderStatus !== orderStates.delivered && (
-                      // TODO: next
-                      <Button onClick={() => assignRider()}>Action</Button>
+                      <Select
+                        onValueChange={(value) =>
+                          updateOrderStatus(order.orderId, value)
+                        }
+                      >
+                        <SelectTrigger className="w-[180px] border-slate-800 focus:ring-slate-500">
+                          <SelectValue placeholder="Update Order Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <option value="">Choose a status</option>
+                          {orderStatesSequence[order.data.orderStatus]?.map(
+                            (validStatus) => (
+                              <SelectItem key={validStatus} value={validStatus}>
+                                {validStatus}
+                              </SelectItem>
+                            ),
+                          )}
+                        </SelectContent>
+                      </Select>
                     )}
                 </TableCell>
               </TableRow>
