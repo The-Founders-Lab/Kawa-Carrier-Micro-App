@@ -2,12 +2,12 @@ import Orders from "@/components/Orders";
 import Riders from "@/components/Riders";
 import useGetAsyncHook from "@/getAsyncHook";
 import { useToast } from "./ui/use-toast";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import Loader from "./Loader";
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
 export default function Dashboard() {
-  const [pageLoading, setPageLoading] = useState(false);
   const { data: orderList, setReload: setOrderReload } = useGetAsyncHook(
     `${SERVER_URL}/orders`,
   );
@@ -25,7 +25,7 @@ export default function Dashboard() {
         description: "Pulling fresh data",
       });
       setOrderReload((reload) => reload + 1);
-    }, 10000);
+    }, 5000);
     return () => clearInterval(orderRefreshId);
   }, []);
 
@@ -35,7 +35,6 @@ export default function Dashboard() {
   }
 
   function assignRider(orderId, riderId) {
-    setPageLoading(true);
     fetch(`${SERVER_URL}/orders/assign-rider`, {
       method: "PATCH",
       headers: {
@@ -48,9 +47,7 @@ export default function Dashboard() {
     })
       .then((resp) => resp.json())
       .then((data) => {
-        setPageLoading(true);
         if (data.response.statusCode !== 200) {
-          setPageLoading(false);
           return toast({
             title: "Error",
             variant: "destructive",
@@ -66,7 +63,6 @@ export default function Dashboard() {
           variant: "success",
           description: data?.message || data?.response?.message,
         });
-        setPageLoading(false);
         reload();
       })
       .catch((error) => {
@@ -78,7 +74,6 @@ export default function Dashboard() {
             error?.response?.message ||
             "Something went wrong",
         });
-        setPageLoading(false);
       });
   }
 
@@ -120,8 +115,8 @@ export default function Dashboard() {
       });
   }
 
-  if (!riderList || !orderList || pageLoading) {
-    return <p>Loading</p>;
+  if (!riderList || !orderList) {
+    return <Loader />;
   }
   return (
     <div className="min-h-screen bg-gray-200">
