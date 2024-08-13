@@ -18,6 +18,14 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 
+const orderStates = {
+  processing: "processing",
+  start: "start",
+  pickup: "pickup",
+  delivered: "delivered",
+  delayed: "delayed",
+};
+
 export default function Orders({ orderList, riderList, assignRider }) {
   return (
     <Card className="shadow-lg">
@@ -47,12 +55,12 @@ export default function Orders({ orderList, riderList, assignRider }) {
                 <TableCell>
                   <Badge
                     variant={
-                      order.data.orderStatus === "delivered"
+                      order.data.orderStatus === orderStates.delivered
                         ? "success"
                         : "secondary"
                     }
                     className={
-                      order.data.orderStatus === "delivered"
+                      order.data.orderStatus === orderStates.delivered
                         ? "bg-green-200 text-green-800"
                         : "bg-yellow-200 text-yellow-800"
                     }
@@ -61,7 +69,7 @@ export default function Orders({ orderList, riderList, assignRider }) {
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  {(order.data.orderStatus === "processing" &&
+                  {(order.data.orderStatus === orderStates.processing &&
                     !order.data.rider && (
                       <Select
                         onValueChange={(value) =>
@@ -87,7 +95,7 @@ export default function Orders({ orderList, riderList, assignRider }) {
                 </TableCell>
                 <TableCell>
                   {order.data?.rider &&
-                    order.data.orderStatus !== "delivered" && (
+                    order.data.orderStatus !== orderStates.delivered && (
                       // TODO: next
                       <Button onClick={() => assignRider()}>Action</Button>
                     )}

@@ -19,7 +19,7 @@ export class WebhookController {
     );
     console.log(body.id);
     const order = await this.ordersService.create({
-      data: { ...body.data, orderStatus: OrderStatusEnum.pending },
+      data: { ...body.data, orderStatus: OrderStatusEnum.processing },
       orderId: body.data.id,
     });
     console.log({
