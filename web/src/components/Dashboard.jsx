@@ -16,6 +16,19 @@ export default function Dashboard() {
   );
   const { toast } = useToast();
 
+  useEffect(() => {
+    // NOTE: The use of polling here is NOT RECOMMENDED.
+    // This is for testing purposes only
+    const orderRefreshId = setInterval(() => {
+      toast({
+        title: "Syncing Orders",
+        description: "Pulling fresh data",
+      });
+      setOrderReload((reload) => reload + 1);
+    }, 10000);
+    return () => clearInterval(orderRefreshId);
+  }, []);
+
   function reload() {
     setOrderReload((reload) => reload + 1);
     setRiderReload((reload) => reload + 1);
