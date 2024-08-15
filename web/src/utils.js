@@ -1,0 +1,50 @@
+const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
+export async function assignRider(orderId, riderId) {
+  const resp = await fetch(`${SERVER_URL}/orders/assign-rider`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      orderId,
+      riderId,
+    }),
+  });
+
+  const data = await resp.json();
+
+  if (data.response.statusCode !== 200) {
+    throw new Error(data?.message || data?.response?.message);
+  }
+
+  return data;
+}
+
+export async function updateOrderStatus(orderId, status = "", otherUpdateData) {
+  const resp = await fetch(`${SERVER_URL}/orders/update-status`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      orderId,
+      orderStatus: status,
+      ...otherUpdateData,
+    }),
+  });
+
+  const data = await resp.json();
+
+  if (data.data.statusCode !== 200) {
+    throw new Error(data?.message);
+  }
+
+  return data;
+}
+
+export async function swithOrderMode() {
+  const resp = await fetch(`${SERVER_URL}/carrier-webhook/switch-mode`);
+  const data = await resp.json();
+  return data;
+}

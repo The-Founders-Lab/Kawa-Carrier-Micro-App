@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import Loader from "./Loader";
 import { RefreshCw } from "lucide-react";
 import Header from "./Header";
+import * as utils from "@/utils";
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
@@ -42,115 +43,71 @@ export default function Dashboard() {
     setRiderReload((reload) => reload + 1);
   }
 
-  function assignRider(orderId, riderId) {
-    setPageIsLoading(true);
-    fetch(`${SERVER_URL}/orders/assign-rider`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        orderId,
-        riderId,
-      }),
-    })
-      .then((resp) => resp.json())
-      .then((data) => {
-        setPageIsLoading(false);
-        if (data.response.statusCode !== 200) {
-          return toast({
-            title: "Error",
-            variant: "destructive",
-            description:
-              data?.message ||
-              data?.response?.message ||
-              "Something went wrong",
-          });
-        }
-
-        toast({
-          title: "Order assigned successfully",
-          variant: "success",
-          description: data?.message || data?.response?.message,
-        });
-        reload();
-      })
-      .catch((error) => {
-        setPageIsLoading(false);
-        console.log("error", error);
-        toast({
-          title: "Error",
-          description:
-            error?.message ||
-            error?.response?.message ||
-            "Something went wrong",
-        });
+  async function assignRider(orderId, riderId) {
+    try {
+      setPageIsLoading(true);
+      const data = await utils.assignRider(orderId, riderId);
+      setPageIsLoading(false);
+      toast({
+        title: "Order assigned successfully",
+        variant: "success",
+        description: data?.message || data?.response?.message,
       });
+      reload();
+    } catch (error) {
+      setPageIsLoading(false);
+      console.log("error while assigning rider", error);
+      toast({
+        title: "Error",
+        description:
+          error?.message || error?.response?.message || "Something went wrong",
+      });
+    }
   }
 
-  function updateOrderStatus(orderId, status = "", otherUpdateData) {
-    setPageIsLoading(true);
-    fetch(`${SERVER_URL}/orders/update-status`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        orderId,
-        orderStatus: status,
-        ...otherUpdateData,
-      }),
-    })
-      .then((resp) => resp.json())
-      .then((data) => {
-        setPageIsLoading(false);
-        if (data.data.statusCode !== 200) {
-          return toast({
-            title: "Error",
-            variant: "destructive",
-            description: data?.message || "Something went wrong",
-          });
-        }
-
-        toast({
-          title: "Success",
-          variant: "success",
-          description: `Order "${status}" successfully`,
-        });
-        reload();
-      })
-      .catch((error) => {
-        setPageIsLoading(false);
-        console.log("error", error);
-        toast({
-          title: "Error",
-          description: error?.message || "Something went wrong",
-        });
+  async function updateOrderStatus(orderId, status = "", otherUpdateData) {
+    try {
+      setPageIsLoading(true);
+      await utils.updateOrderStatus(orderId, status, otherUpdateData);
+      setPageIsLoading(false);
+      toast({
+        title: "Success",
+        variant: "success",
+        description: `Order "${status}" successfully`,
       });
+      reload();
+    } catch (error) {
+      setPageIsLoading(false);
+      console.log("error", error);
+      toast({
+        title: "Error",
+        variant: "destructive",
+        description: error?.message || "Something went wrong",
+      });
+    }
   }
 
-  function handleEnvironmentChange() {
-    setPageIsLoading(true);
-    fetch(`${SERVER_URL}/carrier-webhook/switch-mode`)
-      .then((resp) => resp.json())
-      .then((data) => {
-        reload();
-        setEnvironmentMode(data.mode);
-        setPageIsLoading(false);
-        toast({
-          title: "Success",
-          variant: "success",
-          description: data.message,
-        });
-      })
-      .catch((error) => {
-        console.log("error switching mode", error);
-        setPageIsLoading(false);
-        toast({
-          title: "Error",
-          description: "An error occured from our side. Please contact support",
-        });
+  async function handleEnvironmentChange() {
+    try {
+      setPageIsLoading(true);
+      const data = await utils.swithOrderMode();
+      reload();
+      setEnvironmentMode(data.mode);
+      setPageIsLoading(false);
+      toast({
+        title: "Success",
+        variant: "success",
+        description: data.message,
       });
+    } catch (error) {
+      console.log("error switching mode", error);
+      setPageIsLoading(false);
+      toast({
+        title: "Error",
+        variant: "destructive",
+        description: "An error occured from our side. Please contact support",
+      });
+    }
   }
 
   if (!riderList || !orderList || pageIsLoading) {
