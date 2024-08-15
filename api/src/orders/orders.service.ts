@@ -89,14 +89,18 @@ export class OrdersService {
   }
 
   findAll() {
-    return this.ordersRepository
-      .createQueryBuilder(Order.name)
-      .where('data @> :isDemo', {
-        isDemo: {
-          isSdkDemo: this.webhookService.MODE === IntegrationKeysEnum.test,
-        },
-      })
-      .getMany();
+    return (
+      this.ordersRepository
+        .createQueryBuilder(Order.name)
+        .where('data @> :isDemo', {
+          isDemo: {
+            isSdkDemo: this.webhookService.MODE === IntegrationKeysEnum.test,
+          },
+        })
+        .orderBy(`${Order.name}.createdAt`, 'DESC')
+        // .addOrderBy('createdAt', 'DESC')
+        .getMany()
+    );
   }
 
   findOne(orderId: string) {

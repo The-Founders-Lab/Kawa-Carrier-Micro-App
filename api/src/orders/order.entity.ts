@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity()
 export class Order {
@@ -7,4 +7,7 @@ export class Order {
 
   @Column({ type: 'jsonb', nullable: true })
   data: Record<string, object | string>;
+
+  @CreateDateColumn()
+  createdAt: Date;
 }
