@@ -1,7 +1,8 @@
 import { Req, Body, Controller, Post } from '@nestjs/common';
 import { OrdersService } from 'src/orders/orders.service';
 import { WebhookService } from './webhook.service';
-import { OrderStatusEnum } from 'src/orders/schemas/orders.schema';
+import { OrderStatusEnum } from 'src/orders/order.enum';
+import type { Request } from 'express';
 
 @Controller('carrier-webhook')
 export class WebhookController {
@@ -11,7 +12,10 @@ export class WebhookController {
   ) {}
 
   @Post('/send')
-  async receiveOrder(@Body() body, @Req() req) {
+  async receiveOrder(
+    @Body() body: Record<string, any>,
+    @Req() req: Request & { headers: Record<string, any> },
+  ) {
     console.log('RECEIVED', Object.keys(body));
     this.webhookService.verifyDataIsFromKawa(
       req.headers['x-kawa-signature'],

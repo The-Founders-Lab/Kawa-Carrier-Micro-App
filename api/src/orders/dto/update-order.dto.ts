@@ -7,7 +7,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { OrderStatusEnum } from '../schemas/orders.schema';
+import { OrderStatusEnum } from '../order.enum';
 
 export class UpdateOrderDto extends PartialType(CreateOrderDto) {
   @IsString()

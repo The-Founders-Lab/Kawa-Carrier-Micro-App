@@ -1,10 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { InjectModel } from '@nestjs/mongoose';
-import { Order, OrderStatusEnum } from './schemas/orders.schema';
-import { Order as OrderEntity } from './order.entity';
-import { Model } from 'mongoose';
+import { OrderStatusEnum } from './order.enum';
+import { Order } from './order.entity';
 import { RidersService } from 'src/riders/riders.service';
 import config from 'src/config';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -13,9 +11,8 @@ import { Repository } from 'typeorm';
 @Injectable()
 export class OrdersService {
   constructor(
-    @InjectRepository(OrderEntity)
-    private ordersRepository: Repository<OrderEntity>,
-    @InjectModel(Order.name) private orderModel: Model<Order>,
+    @InjectRepository(Order)
+    private ordersRepository: Repository<Order>,
     private readonly ridersService: RidersService,
   ) {}
 

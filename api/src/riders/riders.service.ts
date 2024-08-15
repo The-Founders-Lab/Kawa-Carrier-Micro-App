@@ -1,7 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Riders, RidersDocument } from './schemas/riders.schema';
-import { Model } from 'mongoose';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Rider } from './rider.entity';
 import { Repository } from 'typeorm';
@@ -10,7 +7,6 @@ import { Repository } from 'typeorm';
 export class RidersService {
   constructor(
     @InjectRepository(Rider) private ridersRepository: Repository<Rider>,
-    @InjectModel(Riders.name) private readonly ridersModel: Model<Riders>,
   ) {}
 
   getRiders() {
