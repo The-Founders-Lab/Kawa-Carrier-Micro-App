@@ -1,19 +1,20 @@
 ### Micro app Webhook
+
 ## Installation
 
 ```bash
 $ npm install
 ```
 
-
 ## Setup your environment variables.
 
 Make sure to update the new variables in the .env file
+
 ```bash
 $ cp .sample.env .env
 ```
 
-## Confirm your mongodb instance is on
+## Confirm your postgresql db has started
 
 ## Running the app
 
@@ -40,4 +41,3 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
-
