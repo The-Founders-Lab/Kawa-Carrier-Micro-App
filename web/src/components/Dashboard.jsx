@@ -2,7 +2,7 @@ import Orders from "@/components/Orders";
 import Riders from "@/components/Riders";
 import useGetAsyncHook from "@/getAsyncHook";
 import { useToast } from "./ui/use-toast";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Loader from "./Loader";
 import { RefreshCw } from "lucide-react";
 
@@ -15,6 +15,7 @@ export default function Dashboard() {
   const { data: riderList, setReload: setRiderReload } = useGetAsyncHook(
     `${SERVER_URL}/riders`,
   );
+  const [pageIsLoading, setPageIsLoading] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -40,6 +41,7 @@ export default function Dashboard() {
   }
 
   function assignRider(orderId, riderId) {
+    setPageIsLoading(true);
     fetch(`${SERVER_URL}/orders/assign-rider`, {
       method: "PATCH",
       headers: {
@@ -52,6 +54,7 @@ export default function Dashboard() {
     })
       .then((resp) => resp.json())
       .then((data) => {
+        setPageIsLoading(false);
         if (data.response.statusCode !== 200) {
           return toast({
             title: "Error",
@@ -71,6 +74,7 @@ export default function Dashboard() {
         reload();
       })
       .catch((error) => {
+        setPageIsLoading(false);
         console.log("error", error);
         toast({
           title: "Error",
@@ -83,6 +87,7 @@ export default function Dashboard() {
   }
 
   function updateOrderStatus(orderId, status = "", otherUpdateData) {
+    setPageIsLoading(true);
     fetch(`${SERVER_URL}/orders/update-status`, {
       method: "PATCH",
       headers: {
@@ -96,6 +101,7 @@ export default function Dashboard() {
     })
       .then((resp) => resp.json())
       .then((data) => {
+        setPageIsLoading(false);
         if (data.data.statusCode !== 200) {
           return toast({
             title: "Error",
@@ -112,6 +118,7 @@ export default function Dashboard() {
         reload();
       })
       .catch((error) => {
+        setPageIsLoading(false);
         console.log("error", error);
         toast({
           title: "Error",
@@ -120,7 +127,7 @@ export default function Dashboard() {
       });
   }
 
-  if (!riderList || !orderList) {
+  if (!riderList || !orderList || pageIsLoading) {
     return <Loader />;
   }
   return (
