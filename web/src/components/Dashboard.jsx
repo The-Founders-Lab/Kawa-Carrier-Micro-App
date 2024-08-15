@@ -5,6 +5,7 @@ import { useToast } from "./ui/use-toast";
 import { useEffect, useState } from "react";
 import Loader from "./Loader";
 import { RefreshCw } from "lucide-react";
+import Header from "./Header";
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
@@ -132,12 +133,8 @@ export default function Dashboard() {
   }
   return (
     <div className="min-h-screen bg-gray-200">
-      <header className="bg-black text-slate-100 py-6 shadow-md">
-        <div className="container mx-auto px-4">
-          <h1 className="text-3xl font-bold">0x Carrier Dashboard</h1>
-        </div>
-      </header>
       <main className="container mx-auto p-4 pb-32 space-y-8">
+        <Header />
         <Orders
           orderList={orderList}
           assignRider={assignRider}
