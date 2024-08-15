@@ -3,19 +3,32 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Order, OrderStatusEnum } from './schemas/orders.schema';
+import { Order as OrderEntity } from './order.entity';
 import { Model } from 'mongoose';
 import { RidersService } from 'src/riders/riders.service';
 import config from 'src/config';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class OrdersService {
   constructor(
+    @InjectRepository(OrderEntity)
+    private ordersRepository: Repository<OrderEntity>,
     @InjectModel(Order.name) private orderModel: Model<Order>,
     private readonly ridersService: RidersService,
   ) {}
 
-  create(createOrderDto: CreateOrderDto) {
-    return this.orderModel.create(createOrderDto);
+  async create(createOrderDto: CreateOrderDto) {
+    const orderExists = await this.ordersRepository.existsBy({
+      orderId: createOrderDto.orderId,
+    });
+    if (orderExists) {
+      throw new BadRequestException('Order with ID already exists');
+    }
+
+    const newOrder = this.ordersRepository.create(createOrderDto);
+    return await this.ordersRepository.save(newOrder);
   }
 
   async assignOrderToRider(orderId: string, riderId: string) {
@@ -41,7 +54,7 @@ export class OrdersService {
         );
       }
 
-      const { available, ...riderPayload } = rider.toJSON();
+      const { available, ...riderPayload } = rider;
       const resp = await fetch(
         `${config.KAWA_SDK_BASE_URL}/orders/assign-order`,
         {
@@ -59,10 +72,11 @@ export class OrdersService {
 
       const respJson = await resp.json();
       if (resp.status === 200) {
-        await order.updateOne({
-          data: { ...order.data, rider: riderPayload },
-        });
-        await rider.updateOne({ available: false });
+        await this.ordersRepository.update(
+          { orderId: order.orderId },
+          { data: { ...order.data, rider: riderPayload } },
+        );
+        await this.ridersService.updateRiderStatus(rider._id, false);
       }
 
       return {
@@ -75,11 +89,11 @@ export class OrdersService {
   }
 
   findAll() {
-    return this.orderModel.find();
+    return this.ordersRepository.find();
   }
 
   findOne(orderId: string) {
-    return this.orderModel.findOne({ orderId });
+    return this.ordersRepository.findOneBy({ orderId });
   }
 
   async updateStatus(update: UpdateOrderDto) {
@@ -97,15 +111,15 @@ export class OrdersService {
       const resp = await fetch(
         `${config.KAWA_SDK_BASE_URL}/orders/update-order-status`,
         {
-          body: JSON.stringify({
-            ...update,
-            orderId,
-          }),
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${config.KAWA_INTEGRATION_KEY}`,
           },
           method: 'POST',
+          body: JSON.stringify({
+            ...update,
+            orderId,
+          }),
         },
       );
       const respJson = await resp.json();
@@ -117,19 +131,25 @@ export class OrdersService {
       console.log();
 
       if (respJson.statusCode === 200) {
-        await this.update(order.id, {
-          data: {
-            ...order.data,
-            orderStatus: update.orderStatus,
+        await this.ordersRepository.update(
+          { orderId: order.orderId },
+          {
+            data: {
+              ...order.data,
+              orderStatus: update.orderStatus,
+            },
           },
-        });
+        );
       }
 
       if (
         respJson.statusCode === 200 &&
         update.orderStatus === OrderStatusEnum.delivered
       ) {
-        await this.ridersService.updateRiderStatus(order.data?.rider, true);
+        await this.ridersService.updateRiderStatus(
+          (order.data as any)?.rider?._id,
+          true,
+        );
       }
 
       return { message: respJson?.message || 'updated', data: respJson };
@@ -140,12 +160,10 @@ export class OrdersService {
   }
 
   update(orderId: string, update: Partial<UpdateOrderDto>) {
-    return this.orderModel.findByIdAndUpdate(orderId, update, {
-      new: true,
-    });
+    return this.ordersRepository.update({ orderId }, update);
   }
 
-  remove(orderId: string) {
-    return this.orderModel.findByIdAndDelete(orderId);
+  async remove(orderId: string) {
+    return this.ordersRepository.delete({ orderId });
   }
 }

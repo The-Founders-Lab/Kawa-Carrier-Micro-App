@@ -10,5 +10,5 @@ export class CreateOrderDto {
 
   @IsObject()
   @IsNotEmpty()
-  data: object;
+  data: Record<string, object | string>;
 }
