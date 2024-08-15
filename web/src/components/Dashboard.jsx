@@ -137,7 +137,7 @@ export default function Dashboard() {
           <h1 className="text-3xl font-bold">0x Carrier Dashboard</h1>
         </div>
       </header>
-      <main className="container mx-auto p-4 space-y-8">
+      <main className="container mx-auto p-4 pb-32 space-y-8">
         <Orders
           orderList={orderList}
           assignRider={assignRider}
@@ -147,6 +147,9 @@ export default function Dashboard() {
 
         <Riders orderList={orderList} riderList={riderList} />
       </main>
+      <footer className="text-center py-5">
+        &copy; 2024. KAWA - The Founders Lab
+      </footer>
     </div>
   );
 }
