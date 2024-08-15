@@ -15,7 +15,7 @@ export default function Riders({ riderList, orderList }) {
     const order = orderList.find(
       (order) => order.data.rider?._id === rider._id,
     );
-    return order ? { ...rider, orderId: order._id } : rider;
+    return order ? { ...rider, orderId: order.orderId } : rider;
   });
   return (
     <Card className="shadow-lg">
