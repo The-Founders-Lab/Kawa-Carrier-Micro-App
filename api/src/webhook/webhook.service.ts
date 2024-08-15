@@ -1,20 +1,47 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import config from 'src/config';
+import { IntegrationKeysEnum } from './webhook.enum';
 const { createHmac } = require('node:crypto');
 
 @Injectable()
 export class WebhookService {
+  public MODE: IntegrationKeysEnum = IntegrationKeysEnum.test;
+  private readonly INTEGRATION_KEYS: Record<string, any> = {
+    test: 'ka_sk_test_d9cc6351f453be5cb2872a3148532daa25b5b4b6',
+    live: 'ka_sk_live_d3e224249e9d299e8945deeff3d5634a8d15b97e',
+  };
+  public readonly INTEGRATION_KEY: string = this.INTEGRATION_KEYS[this.MODE];
+
+  getIntegrationKey() {
+    return this.INTEGRATION_KEYS[this.MODE];
+  }
+
+  swithEnvironment(): void {
+    this.MODE =
+      this.MODE === IntegrationKeysEnum.live
+        ? IntegrationKeysEnum.test
+        : IntegrationKeysEnum.live;
+  }
+
   verifyDataIsFromKawa(kawaSignatureKey: string, body: object) {
-    const hash: string = createHmac(
+    const testHash: string = createHmac(
       'sha512',
-      config.KAWA_INTEGRATION_KEY as string,
+      this.INTEGRATION_KEYS[IntegrationKeysEnum.test],
     )
       .update(JSON.stringify(body))
       .digest('hex');
 
-    if (kawaSignatureKey !== hash) {
+    const liveHash: string = createHmac(
+      'sha512',
+      this.INTEGRATION_KEYS[IntegrationKeysEnum.live],
+    )
+      .update(JSON.stringify(body))
+      .digest('hex');
+
+    const dataIsFromKnownSource =
+      kawaSignatureKey !== testHash && kawaSignatureKey !== liveHash;
+    if (dataIsFromKnownSource) {
       throw new ForbiddenException('Unknown data source');
     }
-    return kawaSignatureKey === hash;
+    return dataIsFromKnownSource;
   }
 }

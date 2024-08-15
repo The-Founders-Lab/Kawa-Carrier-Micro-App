@@ -1,4 +1,4 @@
-import { Req, Body, Controller, Post } from '@nestjs/common';
+import { Req, Body, Controller, Post, Get } from '@nestjs/common';
 import { OrdersService } from 'src/orders/orders.service';
 import { WebhookService } from './webhook.service';
 import { OrderStatusEnum } from 'src/orders/order.enum';
@@ -21,9 +21,13 @@ export class WebhookController {
       req.headers['x-kawa-signature'],
       body,
     );
-    console.log(body.id);
+    const isSdkDemo = body.data?.isSdkDemo ?? false;
     const order = await this.ordersService.create({
-      data: { ...body.data, orderStatus: OrderStatusEnum.processing },
+      data: {
+        ...body.data,
+        orderStatus: OrderStatusEnum.processing,
+        isSdkDemo,
+      },
       orderId: body.data.id,
     });
     console.log({
@@ -34,6 +38,15 @@ export class WebhookController {
     return {
       message: 'Data saved',
       status: body.orderStatus,
+    };
+  }
+
+  @Get('/switch-mode')
+  public switchEnvironmentMode() {
+    this.webhookService.swithEnvironment();
+    return {
+      message: 'Environment switched successfully',
+      mode: this.webhookService.MODE,
     };
   }
 }

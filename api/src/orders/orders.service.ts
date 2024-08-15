@@ -7,6 +7,8 @@ import { RidersService } from 'src/riders/riders.service';
 import config from 'src/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { WebhookService } from 'src/webhook/webhook.service';
+import { IntegrationKeysEnum } from 'src/webhook/webhook.enum';
 
 @Injectable()
 export class OrdersService {
@@ -14,6 +16,7 @@ export class OrdersService {
     @InjectRepository(Order)
     private ordersRepository: Repository<Order>,
     private readonly ridersService: RidersService,
+    private readonly webhookService: WebhookService,
   ) {}
 
   async create(createOrderDto: CreateOrderDto) {
@@ -58,7 +61,7 @@ export class OrdersService {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${config.KAWA_INTEGRATION_KEY}`,
+            Authorization: `Bearer ${this.webhookService.getIntegrationKey()}`,
           },
           body: JSON.stringify({
             orderId,
@@ -86,7 +89,14 @@ export class OrdersService {
   }
 
   findAll() {
-    return this.ordersRepository.find();
+    return this.ordersRepository
+      .createQueryBuilder(Order.name)
+      .where('data @> :isDemo', {
+        isDemo: {
+          isSdkDemo: this.webhookService.MODE === IntegrationKeysEnum.test,
+        },
+      })
+      .getMany();
   }
 
   findOne(orderId: string) {
@@ -110,7 +120,7 @@ export class OrdersService {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${config.KAWA_INTEGRATION_KEY}`,
+            Authorization: `Bearer ${this.webhookService.getIntegrationKey()}`,
           },
           method: 'POST',
           body: JSON.stringify({
