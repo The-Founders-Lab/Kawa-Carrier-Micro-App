@@ -17,6 +17,7 @@ export default function Dashboard() {
     `${SERVER_URL}/riders`,
   );
   const [pageIsLoading, setPageIsLoading] = useState(false);
+  const [environmentMode, setEnvironmentMode] = useState("test");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -128,13 +129,40 @@ export default function Dashboard() {
       });
   }
 
+  function handleEnvironmentChange() {
+    setPageIsLoading(true);
+    fetch(`${SERVER_URL}/carrier-webhook/switch-mode`)
+      .then((resp) => resp.json())
+      .then((data) => {
+        reload();
+        setEnvironmentMode(data.mode);
+        setPageIsLoading(false);
+        toast({
+          title: "Success",
+          variant: "success",
+          description: data.message,
+        });
+      })
+      .catch((error) => {
+        console.log("error switching mode", error);
+        setPageIsLoading(false);
+        toast({
+          title: "Error",
+          description: "An error occured from our side. Please contact support",
+        });
+      });
+  }
+
   if (!riderList || !orderList || pageIsLoading) {
     return <Loader />;
   }
   return (
     <div className="min-h-screen bg-gray-200">
       <main className="container mx-auto p-4 pb-32 space-y-8">
-        <Header />
+        <Header
+          environmentMode={environmentMode}
+          handleEnvironmentChange={handleEnvironmentChange}
+        />
         <Orders
           orderList={orderList}
           assignRider={assignRider}
