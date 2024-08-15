@@ -50,15 +50,21 @@ const sampleOrderUpdate = {
 };
 
 export default function Orders({
+  environmentMode,
   orderList,
   riderList,
   assignRider,
   updateOrderStatus,
 }) {
+  console.log(environmentMode);
   return (
     <Card className="shadow-lg">
       <CardHeader className="bg-black">
-        <CardTitle className="text-slate-100">Orders</CardTitle>
+        <CardTitle className="text-slate-100">
+          {environmentMode &&
+            environmentMode[0].toUpperCase() + environmentMode?.slice(1)}{" "}
+          Orders
+        </CardTitle>
       </CardHeader>
       <CardContent className="h-[400px] overflow-y-scroll">
         <Table>

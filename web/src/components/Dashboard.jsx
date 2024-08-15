@@ -41,6 +41,7 @@ export default function Dashboard() {
   function reload() {
     setOrderReload((reload) => reload + 1);
     setRiderReload((reload) => reload + 1);
+    setPageIsLoading(false);
   }
 
   async function assignRider(orderId, riderId) {
@@ -121,6 +122,7 @@ export default function Dashboard() {
           handleEnvironmentChange={handleEnvironmentChange}
         />
         <Orders
+          environmentMode={environmentMode}
           orderList={orderList}
           assignRider={assignRider}
           riderList={riderList}
