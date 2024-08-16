@@ -48,7 +48,7 @@ export default function Dashboard() {
   async function assignRider(orderId, riderId) {
     try {
       setPageIsLoading(true);
-      const data = await utils.assignRider(orderId, riderId);
+      const data = await utils.assignRider({ orderId, riderId, environment });
       setPageIsLoading(false);
       toast({
         title: "Order assigned successfully",
@@ -70,7 +70,12 @@ export default function Dashboard() {
   async function updateOrderStatus(orderId, status = "", otherUpdateData) {
     try {
       setPageIsLoading(true);
-      await utils.updateOrderStatus(orderId, status, otherUpdateData);
+      await utils.updateOrderStatus({
+        orderId,
+        status,
+        otherUpdateData,
+        environment,
+      });
       setPageIsLoading(false);
       toast({
         title: "Success",
