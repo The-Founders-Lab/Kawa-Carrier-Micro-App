@@ -33,20 +33,26 @@ const orderStatesSequence = {
 };
 
 const sampleOrderUpdate = {
-  deliveryCode: 1000,
-  orderStartCoord: {
-    lat: 6.8214479,
-    lng: 3.4497741,
+  [orderStates.start]: {
+    orderStartCoord: {
+      lat: 6.8214479,
+      lng: 3.4497741,
+    },
   },
-  riderPickUpCoord: {
-    lat: 6.8214479,
-    lng: 3.4497741,
+  [orderStates.pickup]: {
+    riderPickUpCoord: {
+      lat: 6.8214479,
+      lng: 3.4497741,
+    },
   },
-  riderDropOffCoord: {
-    lat: 6.8214479,
-    lng: 3.4497741,
+  [orderStates.delivered]: {
+    riderDropOffCoord: {
+      lat: 6.8214479,
+      lng: 3.4497741,
+    },
+    deliveryImageLink: "",
+    deliveryCode: 1000,
   },
-  deliveryImageLink: "",
 };
 
 export default function Orders({
@@ -137,7 +143,7 @@ export default function Orders({
                           updateOrderStatus(
                             order.orderId,
                             value,
-                            sampleOrderUpdate,
+                            sampleOrderUpdate[value],
                           )
                         }
                       >
