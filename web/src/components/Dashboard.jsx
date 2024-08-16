@@ -1,6 +1,6 @@
 import Orders from "@/components/Orders";
 import Riders from "@/components/Riders";
-import useGetAsyncHook from "@/getAsyncHook";
+import useGetAsyncHook from "@/hooks/useGetAsyncHook";
 import { useToast } from "./ui/use-toast";
 import { useEffect, useState } from "react";
 import Loader from "./Loader";
