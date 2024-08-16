@@ -11,15 +11,8 @@ export class WebhookService {
   };
   public readonly INTEGRATION_KEY: string = this.INTEGRATION_KEYS[this.MODE];
 
-  getIntegrationKey() {
-    return this.INTEGRATION_KEYS[this.MODE];
-  }
-
-  swithEnvironment(): void {
-    this.MODE =
-      this.MODE === IntegrationKeysEnum.live
-        ? IntegrationKeysEnum.test
-        : IntegrationKeysEnum.live;
+  getIntegrationKey(environment: IntegrationKeysEnum) {
+    return this.INTEGRATION_KEYS[environment];
   }
 
   verifyDataIsFromKawa(kawaSignatureKey: string, body: object) {

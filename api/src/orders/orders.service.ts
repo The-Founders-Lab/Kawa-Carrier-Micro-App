@@ -31,7 +31,19 @@ export class OrdersService {
     return await this.ordersRepository.save(newOrder);
   }
 
-  async assignOrderToRider(orderId: string, riderId: string) {
+  async assignOrderToRider({
+    orderId,
+    riderId,
+    environment,
+  }: {
+    orderId: string;
+    riderId: string;
+    environment: IntegrationKeysEnum;
+  }) {
+    if (!Object.values(IntegrationKeysEnum).includes(environment)) {
+      throw new BadRequestException('A valid environment key is required');
+    }
+
     try {
       const rider = await this.ridersService.findRider(riderId);
       const order = await this.findOne(orderId);
@@ -61,7 +73,7 @@ export class OrdersService {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.webhookService.getIntegrationKey()}`,
+            Authorization: `Bearer ${this.webhookService.getIntegrationKey(environment)}`,
           },
           body: JSON.stringify({
             orderId,
@@ -88,28 +100,38 @@ export class OrdersService {
     }
   }
 
-  findAll() {
-    return (
-      this.ordersRepository
-        .createQueryBuilder(Order.name)
-        .where('data @> :isDemo', {
-          isDemo: {
-            isSdkDemo: this.webhookService.MODE === IntegrationKeysEnum.test,
-          },
-        })
-        .orderBy(`${Order.name}.createdAt`, 'DESC')
-        // .addOrderBy('createdAt', 'DESC')
-        .getMany()
-    );
+  findAll({ environment }) {
+    if (!Object.values(IntegrationKeysEnum).includes(environment)) {
+      throw new BadRequestException('A valid environment key is required');
+    }
+    return this.ordersRepository
+      .createQueryBuilder(Order.name)
+      .where('data @> :isDemo', {
+        isDemo: {
+          isSdkDemo: environment === IntegrationKeysEnum.test,
+        },
+      })
+      .orderBy(`${Order.name}.createdAt`, 'DESC')
+      .getMany();
   }
 
   findOne(orderId: string) {
     return this.ordersRepository.findOneBy({ orderId });
   }
 
-  async updateStatus(update: UpdateOrderDto) {
+  async updateStatus({
+    update,
+    environment,
+  }: {
+    update: UpdateOrderDto;
+    environment: IntegrationKeysEnum;
+  }) {
     if (!Object.values(OrderStatusEnum).includes(update.orderStatus)) {
       throw new BadRequestException('Invalid status update');
+    }
+
+    if (!Object.values(IntegrationKeysEnum).includes(environment)) {
+      throw new BadRequestException('A valid environment key is required');
     }
 
     const { orderId } = update;
@@ -124,7 +146,7 @@ export class OrdersService {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${this.webhookService.getIntegrationKey()}`,
+            Authorization: `Bearer ${this.webhookService.getIntegrationKey(environment)}`,
           },
           method: 'POST',
           body: JSON.stringify({

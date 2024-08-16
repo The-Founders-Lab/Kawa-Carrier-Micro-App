@@ -40,13 +40,4 @@ export class WebhookController {
       status: body.orderStatus,
     };
   }
-
-  @Get('/switch-mode')
-  public switchEnvironmentMode() {
-    this.webhookService.swithEnvironment();
-    return {
-      message: 'Environment switched successfully',
-      mode: this.webhookService.MODE,
-    };
-  }
 }
