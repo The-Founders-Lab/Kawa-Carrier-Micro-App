@@ -9,16 +9,20 @@ import Header from "./Header";
 import * as utils from "@/utils";
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+const ENVIRONMENTS = {
+  test: "test",
+  live: "live",
+};
 
 export default function Dashboard() {
+  const [environmentMode, setEnvironmentMode] = useState(ENVIRONMENTS.test);
   const { data: orderList, setReload: setOrderReload } = useGetAsyncHook(
-    `${SERVER_URL}/orders`,
+    `${SERVER_URL}/orders?environment=${environmentMode}`,
   );
   const { data: riderList, setReload: setRiderReload } = useGetAsyncHook(
     `${SERVER_URL}/riders`,
   );
   const [pageIsLoading, setPageIsLoading] = useState(false);
-  const [environmentMode, setEnvironmentMode] = useState("test");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -89,26 +93,19 @@ export default function Dashboard() {
   }
 
   async function handleEnvironmentChange() {
-    try {
-      setPageIsLoading(true);
-      const data = await utils.swithOrderMode();
-      reload();
-      setEnvironmentMode(data.mode);
-      setPageIsLoading(false);
-      toast({
-        title: "Success",
-        variant: "success",
-        description: data.message,
-      });
-    } catch (error) {
-      console.log("error switching mode", error);
-      setPageIsLoading(false);
-      toast({
-        title: "Error",
-        variant: "destructive",
-        description: "An error occured from our side. Please contact support",
-      });
-    }
+    setPageIsLoading(true);
+    setEnvironmentMode(
+      environmentMode === ENVIRONMENTS.test
+        ? ENVIRONMENTS.live
+        : ENVIRONMENTS.test,
+    );
+    reload();
+    setPageIsLoading(false);
+    toast({
+      title: "Success",
+      variant: "success",
+      description: "Environment switched successfully",
+    });
   }
 
   if (!riderList || !orderList || pageIsLoading) {
