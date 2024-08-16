@@ -1,23 +1,20 @@
 import Orders from "@/components/Orders";
 import Riders from "@/components/Riders";
-import useGetAsyncHook from "@/hooks/useGetAsyncHook";
 import { useToast } from "./ui/use-toast";
 import { useEffect, useState } from "react";
 import Loader from "./Loader";
 import { RefreshCw } from "lucide-react";
 import Header from "./Header";
 import * as utils from "@/utils";
+import useGetAsyncHook from "@/hooks/useGetAsyncHook";
+import useSwitchEnvHook from "@/hooks/useSwitchEnvHook";
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
-const ENVIRONMENTS = {
-  test: "test",
-  live: "live",
-};
 
 export default function Dashboard() {
-  const [environmentMode, setEnvironmentMode] = useState(ENVIRONMENTS.test);
+  const { environment, switchEnvironment } = useSwitchEnvHook();
   const { data: orderList, setReload: setOrderReload } = useGetAsyncHook(
-    `${SERVER_URL}/orders?environment=${environmentMode}`,
+    `${SERVER_URL}/orders?environment=${environment}`,
   );
   const { data: riderList, setReload: setRiderReload } = useGetAsyncHook(
     `${SERVER_URL}/riders`,
@@ -94,11 +91,7 @@ export default function Dashboard() {
 
   async function handleEnvironmentChange() {
     setPageIsLoading(true);
-    setEnvironmentMode(
-      environmentMode === ENVIRONMENTS.test
-        ? ENVIRONMENTS.live
-        : ENVIRONMENTS.test,
-    );
+    switchEnvironment();
     reload();
     setPageIsLoading(false);
     toast({
@@ -115,11 +108,11 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gray-200">
       <main className="container mx-auto p-4 pb-32 space-y-8">
         <Header
-          environmentMode={environmentMode}
+          environmentMode={environment}
           handleEnvironmentChange={handleEnvironmentChange}
         />
         <Orders
-          environmentMode={environmentMode}
+          environmentMode={environment}
           orderList={orderList}
           assignRider={assignRider}
           riderList={riderList}
