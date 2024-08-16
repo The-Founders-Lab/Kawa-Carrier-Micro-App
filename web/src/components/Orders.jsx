@@ -56,7 +56,6 @@ export default function Orders({
   assignRider,
   updateOrderStatus,
 }) {
-  console.log(environmentMode);
   return (
     <Card className="shadow-lg">
       <CardHeader className="bg-black">
