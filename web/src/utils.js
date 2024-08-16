@@ -53,9 +53,3 @@ export async function updateOrderStatus({
 
   return data;
 }
-
-export async function swithOrderMode() {
-  const resp = await fetch(`${SERVER_URL}/carrier-webhook/switch-mode`);
-  const data = await resp.json();
-  return data;
-}

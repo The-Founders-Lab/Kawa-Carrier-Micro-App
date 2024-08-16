@@ -165,22 +165,3 @@ export default function Orders({
     </Card>
   );
 }
-
-{
-  /*!order.data.rider && (
-                    <select
-                      onChange={(event) => {
-                        console.log("change");
-                        assignRider(order.orderId, event.target.value);
-                      }}
-                    >
-                      {riderList
-                        .filter((rider) => rider.available)
-                        .map((rider) => (
-                          <option key={rider._id} value={rider._id.toString()}>
-                            {rider.riderFirstName} {rider.riderLastName}
-                          </option>
-                        ))}
-                    </select>
-                  )*/
-}
