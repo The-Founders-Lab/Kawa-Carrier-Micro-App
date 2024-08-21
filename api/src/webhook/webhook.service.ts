@@ -31,8 +31,8 @@ export class WebhookService {
       .digest('hex');
 
     const dataIsFromKnownSource =
-      kawaSignatureKey !== testHash && kawaSignatureKey !== liveHash;
-    if (dataIsFromKnownSource) {
+      kawaSignatureKey === testHash || kawaSignatureKey === liveHash;
+    if (!dataIsFromKnownSource) {
       throw new ForbiddenException('Unknown data source');
     }
     return dataIsFromKnownSource;
