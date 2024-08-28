@@ -61,6 +61,7 @@ export default function Dashboard() {
       console.log("error while assigning rider", error);
       toast({
         title: "Error",
+        variant: "destructive",
         description:
           error?.message || error?.response?.message || "Something went wrong",
       });

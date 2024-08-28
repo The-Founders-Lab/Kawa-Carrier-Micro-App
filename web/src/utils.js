@@ -17,7 +17,7 @@ export async function assignRider({ orderId, riderId, environment }) {
 
   const data = await resp.json();
 
-  if (data.response.statusCode !== 200) {
+  if (!data.response || data.response?.statusCode !== 200) {
     throw new Error(data?.message || data?.response?.message);
   }
 
