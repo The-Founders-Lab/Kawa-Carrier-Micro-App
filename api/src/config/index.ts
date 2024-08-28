@@ -8,5 +8,7 @@ export default {
 
   // integration config
   KAWA_INTEGRATION_KEY: process.env.KAWA_INTEGRATION_KEY,
+  KAWA_SECRET_TEST_KEY: process.env.KAWA_SECRET_TEST_KEY,
+  KAWA_SECRET_LIVE_KEY: process.env.KAWA_SECRET_LIVE_KEY,
   KAWA_SDK_BASE_URL: process.env.KAWA_SDK_BASE_URL,
 };

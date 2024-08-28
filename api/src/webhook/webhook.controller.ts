@@ -1,4 +1,4 @@
-import { Req, Body, Controller, Post, Get } from '@nestjs/common';
+import { Req, Body, Controller, Post } from '@nestjs/common';
 import { OrdersService } from 'src/orders/orders.service';
 import { WebhookService } from './webhook.service';
 import { OrderStatusEnum } from 'src/orders/order.enum';

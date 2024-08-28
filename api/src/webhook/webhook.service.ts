@@ -1,15 +1,14 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { IntegrationKeysEnum } from './webhook.enum';
+import config from 'src/config';
 const { createHmac } = require('node:crypto');
 
 @Injectable()
 export class WebhookService {
-  public MODE: IntegrationKeysEnum = IntegrationKeysEnum.test;
   private readonly INTEGRATION_KEYS: Record<string, any> = {
-    test: 'ka_sk_test_d9cc6351f453be5cb2872a3148532daa25b5b4b6',
-    live: 'ka_sk_live_d3e224249e9d299e8945deeff3d5634a8d15b97e',
+    test: config.KAWA_SECRET_TEST_KEY,
+    live: config.KAWA_SECRET_LIVE_KEY,
   };
-  public readonly INTEGRATION_KEY: string = this.INTEGRATION_KEYS[this.MODE];
 
   getIntegrationKey(environment: IntegrationKeysEnum) {
     return this.INTEGRATION_KEYS[environment];
