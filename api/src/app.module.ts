@@ -18,7 +18,7 @@ import config from './config';
       password: config.DB_PASSWORD,
       database: config.DB_DATABASE_NAME,
       autoLoadEntities: true,
-      synchronize: true, // should not be used in production. It could result to loss of data
+      ssl: config.DB_SSL_ENABLED,
     }),
     OrdersModule,
     WebhookModule,
