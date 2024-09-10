@@ -5,6 +5,7 @@ export default {
   DB_USERNAME: process.env.DB_USERNAME,
   DB_PASSWORD: process.env.DB_PASSWORD,
   DB_DATABASE_NAME: process.env.DB_DATABASE_NAME,
+  DB_SSL_ENABLED: process.env.NODE_ENV === 'production' ? true : false,
 
   // integration config
   KAWA_INTEGRATION_KEY: process.env.KAWA_INTEGRATION_KEY,
