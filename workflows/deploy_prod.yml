@@ -43,8 +43,8 @@ jobs:
 
             echo 'Slept for 80 seconds'
 
-            # curl http://localhost:3002/api/v1/health-check
+            # curl http://localhost:8842/health-check
 
       - name: Send curl request to homepage URL
         run: |
-          # curl  https://l-main.kawa.ng/api/v1/health-check
+          # curl  http://microapp.partners.kawa.ng/health
