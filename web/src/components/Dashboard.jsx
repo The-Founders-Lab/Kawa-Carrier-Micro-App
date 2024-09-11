@@ -34,7 +34,7 @@ export default function Dashboard() {
           </p>
         ),
       });
-      setOrderReload((reload) => reload + 1);
+      reload()
     }, 5000);
     return () => clearInterval(orderRefreshId);
   }, []);

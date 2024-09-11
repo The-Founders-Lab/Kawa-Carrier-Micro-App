@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Post } from '@nestjs/common';
 import { RidersService } from './riders.service';
 
 @Controller('riders')
@@ -8,5 +8,10 @@ export class RidersController {
   @Get()
   async getRiders() {
     return await this.ridersService.getRiders();
+  }
+
+  @Post()
+  async createRider() {
+    return await this.ridersService.createRider();
   }
 }
