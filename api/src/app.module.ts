@@ -6,6 +6,7 @@ import { OrdersModule } from './orders/orders.module';
 import { WebhookModule } from './webhook/webhook.module';
 import { RidersModule } from './riders/riders.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { HealthModule } from './health/health.module';
 import config from './config';
 
 @Module({
@@ -23,6 +24,7 @@ import config from './config';
     OrdersModule,
     WebhookModule,
     RidersModule,
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
