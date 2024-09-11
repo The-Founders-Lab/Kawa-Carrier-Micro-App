@@ -18,7 +18,7 @@ jobs:
 
           script: |
             cd /var/www
-            cd microapp.partners.kawa.ng
+            cd microapp.partners.kawa.ng/api
             git fetch --all
             git pull origin main
             echo 'Updates successfully pulled from DEV branch'
