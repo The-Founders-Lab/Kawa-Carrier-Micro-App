@@ -47,4 +47,4 @@ jobs:
 
       - name: Send curl request to homepage URL
         run: |
-          curl  http://microapp.partners.kawa.ng/health
+          curl  https://microapp.partners.kawa.ng/health
