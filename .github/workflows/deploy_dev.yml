@@ -18,10 +18,10 @@ jobs:
 
           script: |
             cd /var/www
-            cd microapp.partners.kawa.ng/api
+            cd microapp.partners.kawa.ng
             git fetch --all
             git pull origin main
-            echo 'Updates successfully pulled from DEV branch'
+            echo 'Updates successfully pulled from MAIN branch'
             sudo docker compose up --build -d --force-recreate
             echo 'Build successfully completed'
 
