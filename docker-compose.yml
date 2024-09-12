@@ -1,7 +1,35 @@
+# services:
+#   app:
+#     build: .
+#     ports:
+#       - '8842:8842'
+#     env_file:
+#       - .env
+
 services:
-  app:
-    build: .
+  dev:
+    container_name: kawa_microapp
+    image: kawa_microapp:1.0.0
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    user: root
+    command: npm run start:prod;
+    env_file: .env
+
     ports:
-      - '8842:8842'
-    env_file:
-      - .env
+      - '8842:8842' #systemport:Dockerport
+    networks:
+      - microapp-network
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    restart: unless-stopped
+
+
+networks:
+  microapp-network:

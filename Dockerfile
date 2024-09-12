@@ -1,5 +1,5 @@
 # Base image
-FROM node:20
+FROM node:20-alpine
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -17,10 +17,10 @@ COPY . .
 COPY .env ./
 
 # Creates a "dist" folder with the production build
-RUN npm run build
+# RUN npm run build
 
 # Expose the port on which the app will run
 EXPOSE 8842
 
 # Start the server using the production build
-CMD ["npm", "run", "start:prod"]
+# CMD ["npm", "run", "start:prod"]
