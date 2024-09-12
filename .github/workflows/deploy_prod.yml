@@ -1,4 +1,4 @@
-name: Deploy PRODUCTION
+name: Deploy DEVELOPMENT
 on:
   push:
     branches: ['main']
@@ -10,9 +10,9 @@ jobs:
       - name: Push to server and deploy
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.PROD_HOST }}
-          username: ${{ secrets.PROD_USERNAME }}
-          password: ${{ secrets.PROD_PASSWORD }}
+          host: ${{ secrets.DEV_HOST }}
+          username: ${{ secrets.DEV_USERNAME }}
+          password: ${{ secrets.DEV_PASSWORD }}
           port: ${{ secrets.PORT }}
           command_timeout: 200m
 
@@ -33,9 +33,9 @@ jobs:
       - name: Sleep for 80 Secs and Test Urls
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.PROD_HOST }}
-          username: ${{ secrets.PROD_USERNAME }}
-          password: ${{ secrets.PROD_PASSWORD }}
+          host: ${{ secrets.DEV_HOST }}
+          username: ${{ secrets.DEV_USERNAME }}
+          password: ${{ secrets.DEV_PASSWORD }}
           port: ${{ secrets.PORT }}
 
           script: |
@@ -47,4 +47,4 @@ jobs:
 
       - name: Send curl request to homepage URL
         run: |
-            curl  http://microapp.partners.kawa.ng/health
+          curl  http://microapp.partners.kawa.ng/health
