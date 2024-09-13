@@ -17,14 +17,14 @@ export class WebhookService {
   verifyDataIsFromKawa(kawaSignatureKey: string, body: object) {
     const testHash: string = createHmac(
       'sha512',
-      this.INTEGRATION_KEYS[IntegrationKeysEnum.test],
+      this.INTEGRATION_KEYS[IntegrationKeysEnum.test] ?? '',
     )
       .update(JSON.stringify(body))
       .digest('hex');
 
     const liveHash: string = createHmac(
       'sha512',
-      this.INTEGRATION_KEYS[IntegrationKeysEnum.live],
+      this.INTEGRATION_KEYS[IntegrationKeysEnum.live] ?? '',
     )
       .update(JSON.stringify(body))
       .digest('hex');
