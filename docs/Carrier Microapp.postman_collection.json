@@ -1,0 +1,313 @@
+{
+	"info": {
+		"_postman_id": "0d110649-1219-42fe-9d89-6adb64757fa2",
+		"name": "Carrier Microapp",
+		"description": "# 🚀 Get started here\n\nThis template guides you through CRUD operations (GET, POST, PUT, DELETE), variables, and tests.\n\n## 🔖 **How to use this template**\n\n#### **Step 1: Send requests**\n\nRESTful APIs allow you to perform CRUD operations using the POST, GET, PUT, and DELETE HTTP methods.\n\nThis collection contains each of these [request](https://learning.postman.com/docs/sending-requests/requests/) types. Open each request and click \"Send\" to see what happens.\n\n#### **Step 2: View responses**\n\nObserve the response tab for status code (200 OK), response time, and size.\n\n#### **Step 3: Send new Body data**\n\nUpdate or add new data in \"Body\" in the POST request. Typically, Body data is also used in PUT request.\n\n```\n{\n    \"name\": \"Add your name in the body\"\n}\n\n ```\n\n#### **Step 4: Update the variable**\n\nVariables enable you to store and reuse values in Postman. We have created a [variable](https://learning.postman.com/docs/sending-requests/variables/) called `base_url` with the sample request [https://postman-api-learner.glitch.me](https://postman-api-learner.glitch.me). Replace it with your API endpoint to customize this collection.\n\n#### **Step 5: Add tests in the \"Scripts\" tab**\n\nAdding tests to your requests can help you confirm that your API is working as expected. You can write test scripts in JavaScript and view the output in the \"Test Results\" tab.\n\n<img src=\"https://content.pstmn.io/fa30ea0a-373d-4545-a668-e7b283cca343/aW1hZ2UucG5n\" alt=\"\" height=\"1530\" width=\"2162\">\n\n## 💪 Pro tips\n\n- Use folders to group related requests and organize the collection.\n    \n- Add more [scripts](https://learning.postman.com/docs/writing-scripts/intro-to-scripts/) to verify if the API works as expected and execute workflows.\n    \n\n## 💡Related templates\n\n[API testing basics](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9a37a28-055b-49cd-8c7e-97494a21eb54&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[API documentation](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9c28f47-1253-44af-a2f3-20dce4da1f18&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[Authorization methods](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=31a9a6ed-4cdf-4ced-984c-d12c9aec1c27&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "11729879"
+	},
+	"item": [
+		{
+			"name": "Order",
+			"item": [
+				{
+					"name": "Get All Orders",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful POST request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/orders?environment=test",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders"
+							],
+							"query": [
+								{
+									"key": "environment",
+									"value": "test",
+									"description": "`test` or `live`"
+								}
+							]
+						},
+						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+					},
+					"response": []
+				},
+				{
+					"name": "Assign Order to Rider",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"riderId\": \"3f8f6974-f3c7-4a03-b3fc-d51faaa42a1b\",\n    \"orderId\": \"47a39e37-20bb-4288-999d-f07b3932b079\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/orders/assign-rider?environment=test",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders",
+								"assign-rider"
+							],
+							"query": [
+								{
+									"key": "environment",
+									"value": "test",
+									"description": "`test` or `live`"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Order Status",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"orderStatus\": \"delivered\", // important\n    \"orderId\": \"47a39e37-20bb-4288-999d-f07b3932b079\", // important\n    \"orderStartCoord\": {\n        \"lat\": 6.8214479,\n        \"lng\": 3.4497741\n    },\n    \"riderPickUpCoord\": {\n        \"lat\": 6.8214479,\n        \"lng\": 3.4497741\n    },\n    \"deliveryCode\": 1000,\n    \"riderDropOffCoord\": {\n        \"lat\": 6.8214479,\n        \"lng\": 3.4497741\n    },\n    \"deliveryImageLink\": \"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/orders/update-status?environment=test",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders",
+								"update-status"
+							],
+							"query": [
+								{
+									"key": "environment",
+									"value": "test",
+									"description": "`test` or `live`"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Webhook",
+			"item": [
+				{
+					"name": "Receive order webhook",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-kawa-signature",
+								"value": "ba496f32467b637959bba8e886c7fef0130dda1c7d63e26cfa1cca2a16191f4d84b17e6f1aae8bf44a9208ac349f57b82112ac70bc16fe09deab17357388705c",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"event\": \"order.processing\",\n    \"data\": {\n        \"id\": \"93acf298-d364-4109-a5dc-a0136e594db0\",\n        \"note\": \"\",\n        \"itemImage\": [],\n        \"itemWeight\": \"M\",\n        \"itemDescription\": \"Construction materials\",\n        \"itemValue\": \"56000.00\",\n        \"senderName\": \"YDM\",\n        \"senderNumber\": \"+2348035455438\",\n        \"senderEmail\": \"emmanueltopea@gmail.com\",\n        \"recieverName\": \"Tobi Samuel\",\n        \"recieverNumber\": \"+2348182205275\",\n        \"orderClassification\": null,\n        \"deliveryLinkIdentifier\": null,\n        \"orderType\": \"single\",\n        \"pickupLocation\": \"32 secretariat agodi, ibadan Ibadan-Agodi Oyo\",\n        \"dropoffLocation\": \"Vanguard Monantan Ibadan-Monantan\",\n        \"recieversLandmark\": \"Ibadan-Agodi\",\n        \"dropOffLga\": \"Ibadan-Monantan\",\n        \"pickUpLga\": \"Ibadan-Agodi\",\n        \"couponCode\": null,\n        \"amount\": \"1000.00\",\n        \"discountedAmount\": null,\n        \"deliverySchedule\": \"1724976001000\",\n        \"pickUpDate\": null,\n        \"estimatedPickUpDate\": \"1725271200000\",\n        \"deliveryDate\": null,\n        \"estimatedDeliveryDate\": \"1725273540000\",\n        \"pickUpCoord\": {\n            \"lat\": 6.677450100000001,\n            \"lng\": 3.2570533\n        },\n        \"dropOffCoord\": {\n            \"lat\": 6.5960433,\n            \"lng\": 3.3511002\n        },\n        \"trackingNumber\": \"7992036814683431567885398\",\n        \"isDelivered\": false,\n        \"isOrderRated\": false,\n        \"isScheduled\": false,\n        \"createdByCarrier\": false,\n        \"recieversEmail\": null,\n        \"isExpressDelivery\": false,\n        \"category\": [\n            \"Construction Materials\"\n        ],\n        \"paymentLink\": \"https://checkout.paystack.com/5txp6pwcedon3mv\",\n        \"deliveryCode\": 1040,\n        \"deliveryImageLink\": null,\n        \"pickUpImageLink\": null,\n        \"isOrderStarted\": false,\n        \"orderStartDate\": null,\n        \"orderStartCoord\": null,\n        \"riderPickUpCoord\": null,\n        \"riderDropOffCoord\": null,\n        \"riderdelayedCoord\": null,\n        \"delayTimeUpdate\": null,\n        \"delayOrderAt\": null,\n        \"delayReason\": null,\n        \"distanceTime\": \"39\",\n        \"orderSource\": \"app\",\n        \"riderMetadata\": null,\n        \"createdAt\": \"2024-08-09T11:03:06.810Z\",\n        \"user\": {\n            \"id\": \"6a90429b-6ece-49bf-839c-d59201c346a7\",\n            \"email\": \"emmanueltopea@gmail.com\",\n            \"userName\": null,\n            \"firstName\": \"Emmanuel\",\n            \"lastName\": \"Oloyede\",\n            \"phone\": \"+2347014364771\",\n            \"isActive\": true,\n            \"isBlock\": false,\n            \"isEmailVerified\": true,\n            \"userAgent\": null,\n            \"isBusiness\": false,\n            \"businessName\": null,\n            \"isOnboarded\": true,\n            \"hasCreatedOrder\": true,\n            \"userMetadata\": [\n                null\n            ]\n        },\n        \"carrier\": {\n            \"id\": \"be6857e4-ad5f-44cc-9dc5-6b7ddb179b7e\",\n            \"name\": \"0x\",\n            \"email\": \"emmanueltopea@gmail.com\",\n            \"isActive\": true,\n            \"isAccepted\": true,\n            \"internalCarrier\": false,\n            \"isDeactivated\": false,\n            \"isOnboarded\": true,\n            \"isCACVerified\": false,\n            \"isEmailVerified\": true,\n            \"shippingType\": \"local\",\n            \"averageRating\": \"0.00\",\n            \"deliveredCount\": 5,\n            \"carrierMetadata\": [\n                null\n            ],\n            \"carrierAvailability\": [\n                null\n            ]\n        },\n        \"orderStatus\": {\n            \"id\": \"3b67b5e3-d56d-4cf6-acce-1fc5f6f90424\",\n            \"code\": \"PROCESSING\",\n            \"message\": \"Processing Order\",\n            \"htmlMessage\": \"<h2>Processing Order</h2>\"\n        },\n        \"rating\": null,\n        \"rider\": null,\n        \"updatedAt\": \"2024-08-09T11:03:47.000Z\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/carrier-webhook/send",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"carrier-webhook",
+								"send"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "ka_sk_test_d9cc6351f453be5cb2872a3148532daa25b5b4b6",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Riders",
+			"item": [
+				{
+					"name": "Get Riders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/riders",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"riders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a Rider",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/riders",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"riders"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "Health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/health",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"health"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "ka_sk_test_d9cc6351f453be5cb2872a3148532daa25b5b4b6",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "id",
+			"value": "1"
+		},
+		{
+			"key": "base_url",
+			"value": "http://localhost:8842"
+		},
+		{
+			"key": "base_url",
+			"value": "https://microapp.partners.kawa.ng",
+			"type": "string",
+			"disabled": true
+		}
+	]
+}
