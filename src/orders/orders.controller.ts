@@ -9,8 +9,15 @@ export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Get()
-  async getOrders(@Query('environment') environment: IntegrationKeysEnum) {
-    return await this.ordersService.findAll({ environment });
+  async getOrders(
+    @Query('environment') environment: IntegrationKeysEnum,
+    @Query('page') page: number,
+    @Query('pageSize') pageSize: number,
+  ) {
+    page = page || 1;
+    pageSize = pageSize || 10;
+
+    return await this.ordersService.findAll({ page, pageSize, environment });
   }
 
   @Patch('/update-status')
