@@ -100,19 +100,28 @@ export class OrdersService {
     }
   }
 
-  findAll({ environment }) {
+  async findAll({ page, pageSize, environment }) {
     if (!Object.values(IntegrationKeysEnum).includes(environment)) {
       throw new BadRequestException('A valid environment key is required');
     }
-    return this.ordersRepository
+    const [orders, totalOrdersCount] = await this.ordersRepository
       .createQueryBuilder(Order.name)
       .where('data @> :isDemo', {
         isDemo: {
           isSdkDemo: environment === IntegrationKeysEnum.test,
         },
       })
+      .skip((page - 1) * pageSize)
+      .take(pageSize)
       .orderBy(`${Order.name}.createdAt`, 'DESC')
-      .getMany();
+      .getManyAndCount();
+
+    return {
+      page,
+      pageSize,
+      totalOrdersCount,
+      orders,
+    };
   }
 
   findOne(orderId: string) {
