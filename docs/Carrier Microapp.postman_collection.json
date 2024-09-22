@@ -43,7 +43,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/orders?environment=test",
+							"raw": "{{base_url}}/orders?environment=test&page=1&pageSize=10",
 							"host": [
 								"{{base_url}}"
 							],
@@ -55,6 +55,16 @@
 									"key": "environment",
 									"value": "test",
 									"description": "`test` or `live`"
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"description": "The page number"
+								},
+								{
+									"key": "pageSize",
+									"value": "10",
+									"description": "The No of orders per request"
 								}
 							]
 						},

@@ -1,4 +1,4 @@
-import { Req, Body, Controller, Post } from '@nestjs/common';
+import { Req, Body, Controller, Post, HttpCode } from '@nestjs/common';
 import { OrdersService } from 'src/orders/orders.service';
 import { WebhookService } from './webhook.service';
 import { OrderStatusEnum } from 'src/orders/order.enum';
@@ -11,6 +11,7 @@ export class WebhookController {
     private webhookService: WebhookService,
   ) {}
 
+  @HttpCode(200)
   @Post('/send')
   async receiveOrder(
     @Body() body: Record<string, any>,
