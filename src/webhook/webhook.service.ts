@@ -31,6 +31,8 @@ export class WebhookService {
 
     const dataIsFromKnownSource =
       kawaSignatureKey === testHash || kawaSignatureKey === liveHash;
+    console.log('Webhook Data verfied:', dataIsFromKnownSource)
+    console.log('Webhook Integration keys', this.INTEGRATION_KEYS)
     if (!dataIsFromKnownSource) {
       throw new ForbiddenException('Unknown data source');
     }
